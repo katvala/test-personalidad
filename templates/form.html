@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Cuestionario: Estilo de Apego + Triada Oscura</title>
+    <!-- Bootstrap 5 CSS (CDN) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-ENjdO4Dr2bkBIFxQpeo5TUbXcRVXpSl0QVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+    <!-- Los estilos se han movido a style.css -->
+  </head>
+  <body class="bg-light">
+    <!-- Header fijo -->
+    <nav class="navbar navbar-light bg-white fixed-top shadow-sm">
+      <div class="container-fluid">
+        <!-- <span class="navbar-brand mb-0 h5"
+          >Cuestionario: Estilo de Apego y Triada Oscura</span 
+        >-->
+      </div>
+    </nav>
+
+    <div class="container" style="padding-top: 70px">
+      <!-- Barra de Progreso -->
+      <div class="mb-4">
+        <div class="progress">
+          <div
+            id="barraProgreso"
+            class="progress-bar bg-success"
+            role="progressbar"
+            style="width: 0%"
+          >
+            0%
+          </div>
+        </div>
+      </div>
+
+      <form id="surveyForm" action="/submit" method="post">
+        <!-- Paso 1: Datos Demográficos -->
+        <div id="paso1" class="step active">
+          <h4 class="text-center mb-4 text-primary">Información Personal</h4>
+          <div class="question-container demographic-container">
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label for="edad" class="form-label fw-bold">Edad:</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="edad"
+                  name="edad"
+                  min="16"
+                  max="99"
+                  required
+                  placeholder="Ej: 21"
+                />
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label for="sexo" class="form-label fw-bold">Sexo:</label>
+                <select class="form-select" id="sexo" name="sexo" required>
+                  <option value="">Seleccionar...</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Femenino">Femenino</option>
+                  <option value="Otro">Otro</option>
+                  <option value="Prefiero no decir">Prefiero no decir</option>
+                </select>
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label for="carrera" class="form-label fw-bold">Carrera:</label>
+                <select
+                  class="form-select"
+                  id="carrera"
+                  name="carrera"
+                  required
+                >
+                  <option value="">Seleccionar...</option>
+                  <option value="Administración">Administración</option>
+                  <option value="Adm. de Negocios Internacionales">
+                    Adm. de Negocios Internacionales
+                  </option>
+                  <option value="Arquitectura">Arquitectura</option>
+                  <option value="Contabilidad y Finanzas">
+                    Contabilidad y Finanzas
+                  </option>
+                  <option value="Ing. en Ciencia de Datos">
+                    Ing. en Ciencia de Datos
+                  </option>
+                  <option value="Derecho">Derecho</option>
+                  <option value="Ingeniería Civil">Ingeniería Civil</option>
+                  <option value="Ing. de Computación y Sistemas">
+                    Ing. de Computación y Sistemas
+                  </option>
+                  <option value="Ingeniería Industrial">
+                    Ingeniería Industrial
+                  </option>
+                  <option value="Ing. en Inteligencia Artificial y Robótica">
+                    Ing. en Inteligencia Artificial y Robótica
+                  </option>
+                  <option value="Odontología">Odontología</option>
+                  <option value="Psicología">Psicología</option>
+                  <option value="Medicina Humana">Medicina Humana</option>
+                  <option
+                    value="Ing. en Ciberseguridad y Análisis Forense Digital"
+                  >
+                    Ing. en Ciberseguridad y Análisis Forense Digital
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 2: Apego Seguro (prefijo "seg_") -->
+        <div id="paso2" class="step">
+          <h4 class="text-center mb-4 text-success">Apego Seguro</h4>
+          {% for clave, texto in preguntas_apego %} {% if
+          clave.startswith("seg_") %}
+          <div class="question-container">
+            <label class="form-label fw-bold">{{ texto }}</label>
+            <div class="radio-group">
+              {% for valor, etiqueta in opciones_respuesta %}
+              <div class="radio-item">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="{{ clave }}"
+                    id="{{ clave }}_{{ valor }}"
+                    value="{{ valor }}"
+                    required
+                  />
+                  <label class="form-check-label" for="{{ clave }}_{{ valor }}">
+                    {{ etiqueta }}
+                  </label>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %} {% endfor %}
+        </div>
+
+        <!-- Paso 3: Apego Ansioso (prefijo "ans_") -->
+        <div id="paso3" class="step">
+          <h4 class="text-center mb-4 text-warning">Apego Ansioso</h4>
+          {% for clave, texto in preguntas_apego %} {% if
+          clave.startswith("ans_") %}
+          <div class="question-container">
+            <label class="form-label fw-bold">{{ texto }}</label>
+            <div class="radio-group">
+              {% for valor, etiqueta in opciones_respuesta %}
+              <div class="radio-item">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="{{ clave }}"
+                    id="{{ clave }}_{{ valor }}"
+                    value="{{ valor }}"
+                    required
+                  />
+                  <label class="form-check-label" for="{{ clave }}_{{ valor }}">
+                    {{ etiqueta }}
+                  </label>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %} {% endfor %}
+        </div>
+
+        <!-- Paso 4: Apego Evitativo (prefijo "evit_") -->
+        <div id="paso4" class="step">
+          <h4 class="text-center mb-4 text-info">Apego Evitativo</h4>
+          {% for clave, texto in preguntas_apego %} {% if
+          clave.startswith("evit_") %}
+          <div class="question-container">
+            <label class="form-label fw-bold">{{ texto }}</label>
+            <div class="radio-group">
+              {% for valor, etiqueta in opciones_respuesta %}
+              <div class="radio-item">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="{{ clave }}"
+                    id="{{ clave }}_{{ valor }}"
+                    value="{{ valor }}"
+                    required
+                  />
+                  <label class="form-check-label" for="{{ clave }}_{{ valor }}">
+                    {{ etiqueta }}
+                  </label>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %} {% endfor %}
+        </div>
+
+        <!-- Paso 5: Apego Desorganizado (prefijo "desorg_") -->
+        <div id="paso5" class="step">
+          <h4 class="text-center mb-4 text-danger">Apego Desorganizado</h4>
+          {% for clave, texto in preguntas_apego %} {% if
+          clave.startswith("desorg_") %}
+          <div class="question-container">
+            <label class="form-label fw-bold">{{ texto }}</label>
+            <div class="radio-group">
+              {% for valor, etiqueta in opciones_respuesta %}
+              <div class="radio-item">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="{{ clave }}"
+                    id="{{ clave }}_{{ valor }}"
+                    value="{{ valor }}"
+                    required
+                  />
+                  <label class="form-check-label" for="{{ clave }}_{{ valor }}">
+                    {{ etiqueta }}
+                  </label>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %} {% endfor %}
+        </div>
+
+        <!-- Paso 6: Maquiavelismo (prefijo "maq_") -->
+        <div id="paso6" class="step">
+          <h4 class="text-center mb-4 text-dark">Maquiavelismo</h4>
+          {% for clave, texto in preguntas_sd3 %} {% if clave.startswith("maq_")
+          %}
+          <div class="question-container">
+            <label class="form-label fw-bold">{{ texto }}</label>
+            <div class="radio-group">
+              {% for valor, etiqueta in opciones_respuesta %}
+              <div class="radio-item">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="{{ clave }}"
+                    id="{{ clave }}_{{ valor }}"
+                    value="{{ valor }}"
+                    required
+                  />
+                  <label class="form-check-label" for="{{ clave }}_{{ valor }}">
+                    {{ etiqueta }}
+                  </label>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %} {% endfor %}
+        </div>
+
+        <!-- Paso 7: Narcisismo (prefijo "nar_") -->
+        <div id="paso7" class="step">
+          <h4 class="text-center mb-4 text-primary">Narcisismo</h4>
+          {% for clave, texto in preguntas_sd3 %} {% if clave.startswith("nar_")
+          %}
+          <div class="question-container">
+            <label class="form-label fw-bold">{{ texto }}</label>
+            <div class="radio-group">
+              {% for valor, etiqueta in opciones_respuesta %}
+              <div class="radio-item">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="{{ clave }}"
+                    id="{{ clave }}_{{ valor }}"
+                    value="{{ valor }}"
+                    required
+                  />
+                  <label class="form-check-label" for="{{ clave }}_{{ valor }}">
+                    {{ etiqueta }}
+                  </label>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %} {% endfor %}
+        </div>
+
+        <!-- Paso 8: Psicopatía (prefijo "psi_") -->
+        <div id="paso8" class="step">
+          <h4 class="text-center mb-4 text-secondary">Psicopatía</h4>
+          {% for clave, texto in preguntas_sd3 %} {% if clave.startswith("psi_")
+          %}
+          <div class="question-container">
+            <label class="form-label fw-bold">{{ texto }}</label>
+            <div class="radio-group">
+              {% for valor, etiqueta in opciones_respuesta %}
+              <div class="radio-item">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="{{ clave }}"
+                    id="{{ clave }}_{{ valor }}"
+                    value="{{ valor }}"
+                    required
+                  />
+                  <label class="form-check-label" for="{{ clave }}_{{ valor }}">
+                    {{ etiqueta }}
+                  </label>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %} {% endfor %}
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer fijo con botones -->
+    <div class="fixed-footer">
+      <div class="container d-flex justify-content-between align-items-center">
+        <button id="btnAnterior" class="btn btn-outline-secondary" disabled>
+          ← Anterior
+        </button>
+        <span id="stepIndicator" class="text-muted"></span>
+        <button id="btnSiguiente" class="btn btn-success">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS + script para controlar pasos -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ENjdO4Dr2bkBIFxQpeo5TUbXcRVXpSl0QVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const steps = document.querySelectorAll(".step");
+      const btnNext = document.getElementById("btnSiguiente");
+      const btnPrev = document.getElementById("btnAnterior");
+      const progressBar = document.getElementById("barraProgreso");
+      const stepIndicator = document.getElementById("stepIndicator");
+      let currentStep = 0;
+      const totalSteps = steps.length;
+
+      const stepNames = [
+        "Información Personal",
+        "Apego Seguro",
+        "Apego Ansioso",
+        "Apego Evitativo",
+        "Apego Desorganizado",
+        "Maquiavelismo",
+        "Narcisismo",
+        "Psicopatía",
+      ];
+
+      function showStep(index) {
+        steps.forEach((el, i) => {
+          el.classList.toggle("active", i === index);
+        });
+
+        btnPrev.disabled = index === 0;
+        btnNext.textContent =
+          index === totalSteps - 1 ? "Enviar Respuestas" : "Siguiente →";
+
+        const pct = Math.round(((index + 1) / totalSteps) * 100);
+        progressBar.style.width = pct + "%";
+        progressBar.textContent = pct + "%";
+
+        stepIndicator.textContent = `Paso ${index + 1} de ${totalSteps}: ${
+          stepNames[index]
+        }`;
+
+        // Scroll to top when changing steps
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function validateCurrentStep() {
+        const currentStepElement = steps[currentStep];
+
+        if (currentStep === 0) {
+          // Validar datos demográficos
+          const edad = document.getElementById("edad").value;
+          const sexo = document.getElementById("sexo").value;
+          const carrera = document.getElementById("carrera").value;
+
+          if (!edad || !sexo || !carrera) {
+            return false;
+          }
+          return true;
+        } else {
+          // Validar preguntas de radio buttons
+          const radioGroups = {};
+
+          currentStepElement
+            .querySelectorAll('input[type="radio"]')
+            .forEach((radio) => {
+              if (!radioGroups[radio.name]) {
+                radioGroups[radio.name] = [];
+              }
+              radioGroups[radio.name].push(radio);
+            });
+
+          for (const groupName in radioGroups) {
+            const isChecked = radioGroups[groupName].some(
+              (radio) => radio.checked
+            );
+            if (!isChecked) {
+              return false;
+            }
+          }
+          return true;
+        }
+      }
+
+      btnNext.addEventListener("click", () => {
+        if (!validateCurrentStep()) {
+          if (currentStep === 0) {
+            alert(
+              "Por favor, completa todos los campos de información personal."
+            );
+          } else {
+            alert(
+              "Por favor, responde todas las preguntas antes de continuar."
+            );
+          }
+          return;
+        }
+
+        if (currentStep === totalSteps - 1) {
+          // Submit form
+          document.getElementById("surveyForm").submit();
+          return;
+        }
+
+        currentStep++;
+        showStep(currentStep);
+      });
+
+      btnPrev.addEventListener("click", () => {
+        if (currentStep === 0) return;
+        currentStep--;
+        showStep(currentStep);
+      });
+
+      // Initialize
+      showStep(currentStep);
+    </script>
+  </body>
+</html>
