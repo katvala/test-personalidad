@@ -4,7 +4,7 @@ import os
 import datetime
 from dotenv import load_dotenv
 from utils import interpretar_respuestas, interpretar_textos, LISTA_CaMiR, LISTA_SD3, OPCIONES_RESPUESTA
-from google_drive import GoogleDriveManager
+from google_drive_prod import GoogleDriveManager
 from weasyprint import HTML, CSS
 from jinja2 import Template
 
@@ -15,16 +15,22 @@ app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'dev-key-change-in-production')
 
 # Inicializar Google Drive Manager
+print("🔧 Configurando Google Drive...")
 drive_manager = None
 try:
-    # Solo intentar Google Drive si tenemos las credenciales
-    if os.path.exists('config/credentials.json') or os.getenv('GOOGLE_DRIVE_CREDENTIALS'):
-        drive_manager = GoogleDriveManager()
-        print("✅ Google Drive Manager inicializado")
+    drive_manager = GoogleDriveManager()
+    if drive_manager.is_available():
+        print("✅ Google Drive Manager inicializado y disponible")
+        success, message = drive_manager.test_connection()
+        if success:
+            print("✅ Conexión con Google Drive verificada")
+        else:
+            print(f"⚠️ Problema con Google Drive: {message}")
     else:
         print("📁 Google Drive no configurado, usando solo almacenamiento local")
+        drive_manager = None
 except Exception as e:
-    print(f"⚠️ Error al inicializar Google Drive: {e}")
+    print(f"❌ Error al inicializar Google Drive: {e}")
     print("📁 La aplicación funcionará solo con guardado local")
     drive_manager = None
 
@@ -132,31 +138,83 @@ def submit():
     csv_data = [headers, row_data]
     filename = f"respuestas_{timestamp.replace(' ', '_').replace(':', '-')}.csv"
     
+    print(f"💾 Procesando guardado de datos...")
+    print(f"📊 Filename: {filename}")
+    print(f"📈 Headers: {len(headers)} columnas")
+    print(f"📋 Data: {len(row_data)} valores")
+    
+    # Intentar Google Drive primero
+    google_drive_success = False
     try:
-        if drive_manager:
+        if drive_manager and drive_manager.is_available():
+            print("☁️ Intentando subir a Google Drive...")
             file_id = drive_manager.upload_csv(csv_data, filename)
             
             if file_id:
                 print(f"✅ Archivo subido a Google Drive con ID: {file_id}")
+                google_drive_success = True
             else:
-                print("⚠️ Error al subir a Google Drive, guardando localmente como respaldo...")
+                print("❌ Falló la subida a Google Drive")
         else:
-            print("⚠️ Google Drive no está disponible, guardando solo localmente...")
+            print("⚠️ Google Drive no está disponible")
+            if drive_manager is None:
+                print("   - Google Drive Manager no inicializado")
+            elif not drive_manager.is_available():
+                print("   - Credenciales o configuración faltante")
     except Exception as e:
-        print(f"⚠️ Error inesperado con Google Drive: {e}")
-        print("📁 Continuando con guardado local...")
+        print(f"❌ Error inesperado con Google Drive: {e}")
+        import traceback
+        print(f"   Traceback: {traceback.format_exc()}")
+    
+    # Resultado del intento de Google Drive
+    if google_drive_success:
+        print("✅ Backup en Google Drive completado")
+    else:
+        print("⚠️ Google Drive no disponible, guardando solo localmente")
     
     # 9) Guardar localmente como respaldo (independientemente de Google Drive)
-    csv_path = os.path.join(data_dir, "respuestas.csv")
-    file_exists = os.path.exists(csv_path) and os.path.getsize(csv_path) > 0
+    print("💾 Guardando respaldo local...")
     
-    with open(csv_path, "a", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
+    csv_path = os.path.join(data_dir, "respuestas.csv")
+    print(f"📂 Ruta CSV: {csv_path}")
+    
+    file_exists = os.path.exists(csv_path) and os.path.getsize(csv_path) > 0
+    print(f"📄 Archivo existe: {file_exists}")
+    
+    try:
+        with open(csv_path, "a", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            
+            if not file_exists:
+                writer.writerow(headers)
+                print("📋 Headers escritos")
+            
+            writer.writerow(row_data)
+            print("📊 Datos escritos")
         
-        if not file_exists:
-            writer.writerow(headers)
-        
-        writer.writerow(row_data)
+        # Verificar que se guardó correctamente
+        if os.path.exists(csv_path):
+            file_size = os.path.getsize(csv_path)
+            print(f"✅ Guardado local exitoso - Tamaño: {file_size} bytes")
+        else:
+            print("❌ Error: archivo no se creó")
+            
+    except Exception as e:
+        print(f"❌ Error al guardar localmente: {e}")
+        import traceback
+        print(f"   Traceback: {traceback.format_exc()}")
+    
+    # Resumen de guardado
+    print("📊 RESUMEN DE GUARDADO:")
+    print(f"   ☁️ Google Drive: {'✅ Exitoso' if google_drive_success else '❌ Falló'}")
+    print(f"   💾 Local: {'✅ Guardado' if os.path.exists(csv_path) else '❌ Falló'}")
+    
+    # En producción, mostrar advertencia sobre almacenamiento efímero
+    if os.getenv('RENDER') or os.getenv('RAILWAY_ENVIRONMENT'):
+        print("⚠️ NOTA: En producción el almacenamiento local es efímero")
+        print("   Los archivos locales se perderán al reiniciar el servicio")
+        if not google_drive_success:
+            print("   ❗ IMPORTANTE: Configura Google Drive para persistencia")
     
     # 8) Preparar datos para el gráfico radar
     chart_labels = []
