@@ -15,6 +15,8 @@ load_dotenv()
 
 class GoogleDriveManager:
     def __init__(self):
+        # Usar GOOGLE_CREDENTIALS_JSON (Render) o GOOGLE_CREDENTIALS_PATH (local)
+        self.credentials_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
         self.credentials_path = os.getenv("GOOGLE_CREDENTIALS_PATH")
         self.folder_id = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
         self.service = None
@@ -23,17 +25,21 @@ class GoogleDriveManager:
     def _authenticate(self):
         """Autenticar con Google Drive usando cuenta de servicio"""
         try:
-            if not self.credentials_path:
-                raise ValueError("Contenido JSON de credenciales no encontrado en GOOGLE_CREDENTIALS_PATH")
-            
-            creds_dict = json.loads(self.credentials_path)
-            creds = service_account.Credentials.from_service_account_info(
-                creds_dict,
-                scopes=['https://www.googleapis.com/auth/drive.file']
-            )
+            if self.credentials_json:
+                creds_dict = json.loads(self.credentials_json)
+                creds = service_account.Credentials.from_service_account_info(
+                    creds_dict,
+                    scopes=['https://www.googleapis.com/auth/drive.file']
+                )
+            elif self.credentials_path:
+                creds = service_account.Credentials.from_service_account_file(
+                    self.credentials_path,
+                    scopes=['https://www.googleapis.com/auth/drive.file']
+                )
+            else:
+                raise ValueError("No se encontró GOOGLE_CREDENTIALS_JSON ni GOOGLE_CREDENTIALS_PATH")
             self.service = build('drive', 'v3', credentials=creds)
             print("✅ Autenticación con Google Drive exitosa")
-            
         except Exception as e:
             print(f"❌ Error en autenticación con Google Drive: {e}")
             self.service = None
