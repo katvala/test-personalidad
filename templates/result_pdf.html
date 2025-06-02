@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Resultados del Test de Personalidad - PDF</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 2cm;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        line-height: 1.4;
+        color: #333;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #667eea;
+        padding-bottom: 20px;
+      }
+
+      .header h1 {
+        color: #667eea;
+        font-size: 24px;
+        margin: 0 0 10px 0;
+      }
+
+      .header p {
+        color: #666;
+        margin: 0;
+      }
+
+      .section {
+        margin-bottom: 25px;
+        page-break-inside: avoid;
+      }
+
+      .section-title {
+        color: #667eea;
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+      }
+
+      .dominant-traits {
+        background: #f8f9ff;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+      }
+
+      .dominant-badge {
+        background: #667eea;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 11px;
+        font-weight: bold;
+        margin: 3px;
+        display: inline-block;
+      }
+
+      .scores-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin: 15px 0;
+      }
+
+      .score-item {
+        background: #f8f9ff;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #e0e6ff;
+      }
+
+      .score-label {
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 5px;
+      }
+
+      .score-value {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .score-bar {
+        width: 100%;
+        height: 6px;
+        background: #e0e6ff;
+        border-radius: 3px;
+        margin-top: 5px;
+        overflow: hidden;
+      }
+
+      .score-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 3px;
+      }
+
+      .interpretation {
+        background: #f8f9ff;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+        border-left: 4px solid #667eea;
+      }
+
+      .interpretation h4 {
+        color: #667eea;
+        margin: 0 0 10px 0;
+        font-size: 14px;
+      }
+
+      .interpretation p {
+        margin: 8px 0;
+        line-height: 1.5;
+      }
+
+      .insight-card {
+        background: #fff;
+        border: 1px solid #e0e6ff;
+        border-radius: 8px;
+        padding: 12px;
+        margin: 8px 0;
+      }
+
+      .insight-card h5 {
+        color: #667eea;
+        margin: 0 0 8px 0;
+        font-size: 13px;
+      }
+
+      .insight-card p {
+        margin: 0;
+        font-size: 11px;
+        line-height: 1.4;
+      }
+
+      .footer {
+        margin-top: 40px;
+        text-align: center;
+        color: #666;
+        font-size: 10px;
+        border-top: 1px solid #ddd;
+        padding-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Resultados del Test de Personalidad</h1>
+      <p>Análisis completo basado en escalas científicas</p>
+    </div>
+
+    <!-- Rasgos Dominantes -->
+    <div class="section">
+      <h2 class="section-title">Rasgos Dominantes</h2>
+      <div class="dominant-traits">
+        {% if dominantes %} {% for categoria, valor in dominantes.items() %}
+        <span class="dominant-badge">{{ valor }}</span>
+        {% endfor %} {% endif %}
+      </div>
+    </div>
+
+    <!-- Puntuaciones Detalladas -->
+    <div class="section">
+      <h2 class="section-title">Puntuaciones Detalladas</h2>
+      <div class="scores-grid">
+        {% for categoria, puntuacion in puntuaciones.items() %}
+        <div class="score-item">
+          <div class="score-label">{{ categoria }}</div>
+          <div class="score-value">{{ "%.1f"|format(puntuacion) }}</div>
+          <div class="score-bar">
+            <div
+              class="score-fill"
+              style="width: {{ (puntuacion / 5.0 * 100)|round }}%"
+            ></div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Interpretación Textual -->
+    {% if interpretacion_texto %}
+    <div class="section">
+      <h2 class="section-title">Interpretación Personalizada</h2>
+      {% for categoria, contenido in interpretacion_texto.items() %}
+      <div class="interpretation">
+        <h4>{{ categoria }}</h4>
+        {% if contenido is string %}
+        <p>{{ contenido }}</p>
+        {% elif contenido is iterable %} {% for item in contenido %} {% if item
+        is string %}
+        <p>{{ item }}</p>
+        {% endif %} {% endfor %} {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Insights Personalizados -->
+    <div class="section">
+      <h2 class="section-title">Insights Personalizados</h2>
+      {% for categoria, puntuacion in puntuaciones.items() %}
+      <div class="insight-card">
+        <h5>{{ categoria }}</h5>
+        <p>
+          {% if puntuacion >= 4.0 %} Tienes una puntuación muy alta en {{
+          categoria.lower() }}. Esto sugiere que este rasgo es muy prominente en
+          tu personalidad y puede influir significativamente en tu
+          comportamiento y relaciones. {% elif puntuacion >= 3.0 %} Muestras un
+          nivel moderado-alto de {{ categoria.lower() }}. Esto indica que este
+          rasgo está presente de manera notable en tu personalidad. {% elif
+          puntuacion >= 2.0 %} Tu nivel de {{ categoria.lower() }} es moderado.
+          Este rasgo se manifiesta de manera equilibrada en tu personalidad. {%
+          else %} Tu puntuación en {{ categoria.lower() }} es relativamente
+          baja. Esto puede significar que este rasgo no es una característica
+          dominante en tu personalidad. {% endif %}
+        </p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="footer">
+      <p>Test de Personalidad - Generado automáticamente</p>
+      <p>Fecha: {{ fecha_generacion }}</p>
+    </div>
+  </body>
+</html>

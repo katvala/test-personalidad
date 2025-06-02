@@ -2,162 +2,679 @@
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <title>Resultados del Test</title>
-    <!-- Bootstrap 5 CSS (CDN) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Resultados del Test de Personalidad</title>
+    <!-- Bootstrap 5 CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-ENjdO4Dr2bkBIFxQpeo5TUbXcRVXpSl0QVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="/static/style.css" />
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Animate.css para animaciones -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <!-- Font Awesome para iconos -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 50%,
+          #667eea 100%
+        );
+        background-size: 400% 400%;
+        animation: gradientShift 8s ease infinite;
+        min-height: 100vh;
+        padding: 20px 0;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      @keyframes gradientShift {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      /* Partículas flotantes de fondo */
+      .floating-elements {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .floating-element {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        filter: blur(40px);
+        animation: float 8s ease-in-out infinite;
+      }
+
+      .floating-element:nth-child(1) {
+        width: 200px;
+        height: 200px;
+        top: 10%;
+        left: 10%;
+        animation-delay: 0s;
+      }
+
+      .floating-element:nth-child(2) {
+        width: 150px;
+        height: 150px;
+        top: 20%;
+        right: 15%;
+        animation-delay: 2s;
+      }
+
+      .floating-element:nth-child(3) {
+        width: 100px;
+        height: 100px;
+        bottom: 20%;
+        left: 20%;
+        animation-delay: 4s;
+      }
+
+      .floating-element:nth-child(4) {
+        width: 120px;
+        height: 120px;
+        bottom: 30%;
+        right: 10%;
+        animation-delay: 6s;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(0deg);
+          opacity: 0.7;
+        }
+        50% {
+          transform: translateY(-20px) rotate(180deg);
+          opacity: 1;
+        }
+      }
+
+      /* Contenedor principal con glassmorphism */
+      .main-container {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .result-card {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(20px);
+        border-radius: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        padding: 40px;
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+        transform: translateY(20px);
+        opacity: 0;
+        animation: slideInUp 0.8s ease forwards;
+      }
+
+      .result-card:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 40px 0 rgba(31, 38, 135, 0.5);
+      }
+
+      @keyframes slideInUp {
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .result-card:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .result-card:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+      .result-card:nth-child(4) {
+        animation-delay: 0.3s;
+      }
+      .result-card:nth-child(5) {
+        animation-delay: 0.4s;
+      }
+
+      .header-title {
+        text-align: center;
+        color: white;
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(45deg, #fff, #f0f8ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .header-subtitle {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.2rem;
+        margin-bottom: 40px;
+        font-weight: 300;
+      }
+
+      .chart-container {
+        position: relative;
+        height: 500px;
+        margin: 30px 0;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+      }
+
+      .score-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+      }
+
+      .score-item {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .score-item:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-3px);
+      }
+
+      .score-label {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+
+      .score-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      }
+
+      .score-bar {
+        width: 100%;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        margin-top: 10px;
+        overflow: hidden;
+      }
+
+      .score-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        border-radius: 4px;
+        transition: width 1s ease;
+        box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+      }
+
+      .dominant-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: inline-block;
+        margin: 5px;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        50% {
+          box-shadow: 0 4px 25px rgba(102, 126, 234, 0.8);
+        }
+        100% {
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+      }
+
+      .insight-section {
+        margin-top: 40px;
+      }
+
+      .insight-card {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        border-left: 4px solid #4facfe;
+        transition: all 0.3s ease;
+      }
+
+      .insight-card:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateX(10px);
+      }
+
+      .insight-card h5 {
+        color: white;
+        font-weight: 600;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .insight-card p {
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      .btn-download {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 30px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-download:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
+        color: white;
+        text-decoration: none;
+      }
+
+      .btn-home {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 12px 25px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        margin-left: 15px;
+      }
+
+      .btn-home:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        color: white;
+        text-decoration: none;
+      }
+
+      .section-title {
+        color: white;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 25px;
+        text-align: center;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      }
+
+      .action-buttons {
+        text-align: center;
+        margin-top: 40px;
+      }
+
+      /* Responsiveness */
+      @media (max-width: 768px) {
+        .header-title {
+          font-size: 2rem;
+        }
+
+        .main-container {
+          padding: 20px 10px;
+        }
+
+        .result-card {
+          padding: 25px;
+        }
+
+        .chart-container {
+          height: 400px;
+        }
+
+        .score-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Text content styling */
+      .text-interpretation {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 25px;
+        margin: 20px 0;
+      }
+
+      .text-interpretation h4 {
+        color: white;
+        font-weight: 600;
+        margin-bottom: 15px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        padding-bottom: 10px;
+      }
+
+      .text-interpretation p {
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.7;
+        margin-bottom: 15px;
+      }
+
+      .text-interpretation ul {
+        color: rgba(255, 255, 255, 0.9);
+        padding-left: 20px;
+      }
+
+      .text-interpretation li {
+        margin-bottom: 8px;
+        line-height: 1.6;
+      }
+    </style>
   </head>
-  <body class="bg-light">
-    <div class="container py-4">
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <div class="card border-success mb-4">
-            <div class="card-header bg-success text-white">
-              <h5 class="mb-0">Tu Perfil Psicológico</h5>
-            </div>
-            <div class="card-body">
-              <!-- SECCIÓN NUMÉRICA FILTRADA: solo valores altos (>3.5) + dominantes -->
-              <ul class="list-group list-group-flush mb-3">
-                {% set any_altos = false %} {% for clave, valor in
-                interpretacion.items() %} {% if (clave in
-                ["Maquiavelismo","Narcisismo","Psicopatía"] and valor > 3.5) or
-                (clave in ["Apego Ansioso","Apego Evitativo","Apego
-                Desorganizado"] and valor > 3.5) %}
-                <li class="list-group-item d-flex justify-content-between">
-                  <span>{{ clave }}:</span>
-                  <strong>{{ valor }}</strong>
-                </li>
-                {% set any_altos = true %} {% endif %} {% endfor %} {% if not
-                any_altos %}
-                <li class="list-group-item text-success">
-                  Ninguna puntuación alta detectada (>3.5/5). ¡Buen trabajo!
-                  Esto indica un perfil psicológico equilibrado.
-                </li>
-                {% endif %}
 
-                <!-- Siempre mostrar dominantes -->
-                <li class="list-group-item d-flex justify-content-between">
-                  <span>Estilo de Apego Dominante:</span>
-                  <strong
-                    >{{ interpretacion["Estilo de Apego Dominante"] }}</strong
-                  >
-                </li>
-                <li class="list-group-item d-flex justify-content-between">
-                  <span>Triada Oscura Dominante:</span>
-                  <strong>{{ interpretacion["Triada Dominante"] }}</strong>
-                </li>
-              </ul>
+  <body>
+    <!-- Elementos flotantes de fondo -->
+    <div class="floating-elements">
+      <div class="floating-element"></div>
+      <div class="floating-element"></div>
+      <div class="floating-element"></div>
+      <div class="floating-element"></div>
+    </div>
 
-              <!-- SECCIÓN DE INTERPRETACIONES AGRUPADAS -->
+    <!-- Data injection for Chart.js -->
+    <script type="application/json" id="chart-data">
+      {{ chartData | tojson | safe }}
+    </script>
 
-              <!-- Sección de Rasgos de Personalidad -->
-              <div class="card mb-3">
-                <div class="card-header bg-warning">
-                  <strong>Rasgos de Personalidad (Triada Oscura)</strong>
-                </div>
-                <div class="card-body">
-                  {% for tipo in ["Maquiavelismo Elevado", "Maquiavelismo
-                  Moderado", "Maquiavelismo Bajo", "Narcisismo Elevado",
-                  "Narcisismo Moderado", "Narcisismo Bajo", "Psicopatía
-                  Elevada", "Psicopatía Moderada", "Psicopatía Baja"] %} {% if
-                  tipo in interpretacion_texto %}
-                  <p>
-                    <strong>{{ tipo }}:</strong> {{ interpretacion_texto[tipo]
-                    }}
-                  </p>
-                  {% endif %} {% endfor %}
-                </div>
-              </div>
+    <div class="main-container">
+      <!-- Encabezado -->
+      <div class="text-center mb-5">
+        <h1 class="header-title animate__animated animate__fadeInDown">
+          Resultados de tu Test
+        </h1>
+        <p class="header-subtitle animate__animated animate__fadeInUp">
+          Análisis completo de tu personalidad basado en escalas científicas
+        </p>
+      </div>
 
-              <!-- Sección de Estilos de Apego -->
-              <div class="card mb-3">
-                <div class="card-header bg-info">
-                  <strong>Estilos de Apego</strong>
-                </div>
-                <div class="card-body">
-                  {% for tipo in ["Apego Seguro Elevado", "Apego Seguro
-                  Moderado", "Apego Ansioso Elevado", "Apego Ansioso Moderado",
-                  "Apego Evitativo Elevado", "Apego Evitativo Moderado", "Apego
-                  Desorganizado Elevado", "Apego Desorganizado Moderado"] %} {%
-                  if tipo in interpretacion_texto %}
-                  <p>
-                    <strong>{{ tipo }}:</strong> {{ interpretacion_texto[tipo]
-                    }}
-                  </p>
-                  {% endif %} {% endfor %}
-                </div>
-              </div>
+      <!-- Tarjeta de Rasgos Dominantes -->
+      <div class="result-card animate__animated animate__fadeInLeft">
+        <h2 class="section-title">
+          <i class="fas fa-crown"></i> Rasgos Dominantes
+        </h2>
 
-              {% if "Perfil Equilibrado" in interpretacion_texto %}
-              <div class="card mb-3">
-                <div class="card-header bg-success text-white">
-                  <strong>Perfil Equilibrado</strong>
-                </div>
-                <div class="card-body">
-                  <p>{{ interpretacion_texto["Perfil Equilibrado"] }}</p>
-                </div>
-              </div>
-              {% endif %}
-
-              <!-- Descripción General de Personalidad -->
-              <div class="card mb-3">
-                <div class="card-header bg-primary text-white">
-                  <strong>Descripción General de tu Personalidad</strong>
-                </div>
-                <div class="card-body">
-                  <p>
-                    {{ interpretacion_texto["Descripción de tu Personalidad"] }}
-                  </p>
-                </div>
-              </div>
-
-              <!-- Resumen de Puntuaciones -->
-              <div class="card mb-3">
-                <div class="card-header bg-info text-white">
-                  <strong>Resumen de tus Puntuaciones</strong>
-                </div>
-                <div class="card-body">
-                  <pre class="mb-0">
-{{ interpretacion_texto["Tus Puntuaciones"] }}</pre
-                  >
-                </div>
-              </div>
-
-              <!-- Cartel final para Dominantes y Mensaje de Apoyo -->
-              <div class="card mb-3">
-                <div class="card-body">
-                  <p>
-                    <strong>Estilo de Apego Dominante:</strong> {{
-                    interpretacion_texto["Estilo de Apego Dominante"] }}
-                  </p>
-                  <p>
-                    <strong>Triada Oscura Dominante:</strong> {{
-                    interpretacion_texto["Triada Oscura Dominante"] }}
-                  </p>
-                  <hr />
-                  <p>
-                    <strong>Mensaje de Apoyo:</strong> {{
-                    interpretacion_texto["Mensaje de Apoyo"] }}
-                  </p>
-                </div>
-              </div>
-
-              <a href="/" class="btn btn-secondary mt-3">Volver al inicio</a>
-            </div>
-          </div>
+        <div class="text-center">
+          {% if dominantes %} {% for categoria, valor in dominantes.items() %}
+          <span class="dominant-badge">
+            <i class="fas fa-star"></i> {{ valor }}
+          </span>
+          {% endfor %} {% endif %}
         </div>
       </div>
+
+      <!-- Gráfico Radar -->
+      <div class="result-card animate__animated animate__fadeInUp">
+        <h2 class="section-title">
+          <i class="fas fa-chart-radar"></i> Perfil de Personalidad
+        </h2>
+
+        <div class="chart-container">
+          <canvas id="personalityChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Puntuaciones Detalladas -->
+      <div class="result-card animate__animated animate__fadeInRight">
+        <h2 class="section-title">
+          <i class="fas fa-analytics"></i> Puntuaciones Detalladas
+        </h2>
+
+        <div class="score-grid">
+          {% for categoria, puntuacion in puntuaciones.items() %}
+          <div class="score-item">
+            <div class="score-label">{{ categoria }}</div>
+            <div class="score-value">{{ "%.1f"|format(puntuacion) }}</div>
+            <div class="score-bar">
+              <div
+                class="score-fill"
+                style="width: {{ (puntuacion / 5.0 * 100)|round }}%"
+              ></div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Interpretación Textual -->
+      {% if interpretacion_texto %}
+      <div class="result-card animate__animated animate__fadeInLeft">
+        <h2 class="section-title">
+          <i class="fas fa-brain"></i> Interpretación Personalizada
+        </h2>
+
+        {% for categoria, contenido in interpretacion_texto.items() %}
+        <div class="text-interpretation">
+          <h4><i class="fas fa-lightbulb"></i> {{ categoria }}</h4>
+          {% if contenido is string %}
+          <p>{{ contenido }}</p>
+          {% elif contenido is iterable %} {% for item in contenido %} {% if
+          item is string %}
+          <p>{{ item }}</p>
+          {% endif %} {% endfor %} {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Insights Adicionales -->
+      <div class="result-card animate__animated animate__fadeInUp">
+        <h2 class="section-title">
+          <i class="fas fa-compass"></i> Insights Personalizados
+        </h2>
+
+        <div class="insight-section">
+          {% for categoria, puntuacion in puntuaciones.items() %}
+          <div class="insight-card">
+            <h5><i class="fas fa-arrow-right"></i> {{ categoria }}</h5>
+            <p>
+              {% if puntuacion >= 4.0 %} Tienes una puntuación muy alta en {{
+              categoria.lower() }}. Esto sugiere que este rasgo es muy
+              prominente en tu personalidad y puede influir significativamente
+              en tu comportamiento y relaciones. {% elif puntuacion >= 3.0 %}
+              Muestras un nivel moderado-alto de {{ categoria.lower() }}. Esto
+              indica que este rasgo está presente de manera notable en tu
+              personalidad. {% elif puntuacion >= 2.0 %} Tu nivel de {{
+              categoria.lower() }} es moderado. Este rasgo se manifiesta de
+              manera equilibrada en tu personalidad. {% else %} Tu puntuación en
+              {{ categoria.lower() }} es relativamente baja. Esto puede
+              significar que este rasgo no es una característica dominante en tu
+              personalidad. {% endif %}
+            </p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="action-buttons">
+        <a href="{{ url_for('descargar_pdf') }}" class="btn btn-download">
+          <i class="fas fa-download"></i> Descargar Resultados en PDF
+        </a>
+        <a href="{{ url_for('index') }}" class="btn-home">
+          <i class="fas fa-home"></i> Volver al Inicio
+        </a>
+      </div>
     </div>
-    <!-- Bootstrap JS (CDN) -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-ENjdO4Dr2bkBIFxQpeo5TUbXcRVXpSl0QVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6"
-      crossorigin="anonymous"
-    ></script>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Chart.js Script -->
+    <script>
+      // Obtener datos del gráfico desde el elemento JSON
+      const chartDataElement = document.getElementById("chart-data");
+      let chartData = null;
+
+      try {
+        chartData = JSON.parse(chartDataElement.textContent);
+        console.log("Chart data loaded successfully:", chartData);
+      } catch (e) {
+        console.error("Error parsing chart data:", e);
+      }
+
+      // Configuración del gráfico radar
+      const ctx = document.getElementById("personalityChart").getContext("2d");
+
+      // Verificar que los datos existen
+      if (chartData && chartData.labels && chartData.values) {
+        new Chart(ctx, {
+          type: "radar",
+          data: {
+            labels: chartData.labels,
+            datasets: [
+              {
+                label: "Tu Perfil de Personalidad",
+                data: chartData.values,
+                backgroundColor: "rgba(79, 172, 254, 0.2)",
+                borderColor: "rgba(79, 172, 254, 1)",
+                borderWidth: 3,
+                pointBackgroundColor: "rgba(79, 172, 254, 1)",
+                pointBorderColor: "#fff",
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: {
+                  color: "white",
+                  font: {
+                    size: 14,
+                    weight: "600",
+                  },
+                },
+              },
+            },
+            scales: {
+              r: {
+                beginAtZero: true,
+                max: 5,
+                min: 0,
+                ticks: {
+                  stepSize: 1,
+                  color: "rgba(255, 255, 255, 0.8)",
+                  backdropColor: "transparent",
+                  font: {
+                    size: 12,
+                  },
+                },
+                grid: {
+                  color: "rgba(255, 255, 255, 0.3)",
+                },
+                angleLines: {
+                  color: "rgba(255, 255, 255, 0.3)",
+                },
+                pointLabels: {
+                  color: "white",
+                  font: {
+                    size: 13,
+                    weight: "500",
+                  },
+                },
+              },
+            },
+            animation: {
+              duration: 2000,
+              easing: "easeInOutQuart",
+            },
+          },
+        });
+      } else {
+        // Fallback si no hay datos
+        console.error("No chart data available");
+        document.getElementById("personalityChart").parentElement.innerHTML =
+          '<div style="color: white; text-align: center; padding: 50px;"><i class="fas fa-exclamation-triangle"></i><br>No se pudieron cargar los datos del gráfico</div>';
+      }
+
+      // Animación para las barras de puntuación
+      document.addEventListener("DOMContentLoaded", function () {
+        const scoreFills = document.querySelectorAll(".score-fill");
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const fill = entry.target;
+              const width = fill.style.width;
+              fill.style.width = "0%";
+              setTimeout(() => {
+                fill.style.width = width;
+              }, 200);
+            }
+          });
+        });
+
+        scoreFills.forEach((fill) => observer.observe(fill));
+      });
+    </script>
   </body>
 </html>

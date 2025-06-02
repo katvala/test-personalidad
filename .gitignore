@@ -3,6 +3,16 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Google Drive credentials and config
+config/
+credentials.json
+
+# Variables de entorno
+.env
+
+# Archivos de datos locales sensibles
+data/respuestas.csv
+
 # C extensions
 *.so
 

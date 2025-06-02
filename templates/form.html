@@ -2,458 +2,780 @@
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <title>Cuestionario: Estilo de Apego + Triada Oscura</title>
-    <!-- Bootstrap 5 CSS (CDN) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Test de Personalidad - Cuestionario</title>
+    <!-- Bootstrap 5 CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-ENjdO4Dr2bkBIFxQpeo5TUbXcRVXpSl0QVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="/static/style.css" />
-    <!-- Los estilos se han movido a style.css -->
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Animate.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 50%,
+          #667eea 100%
+        );
+        background-size: 400% 400%;
+        animation: gradientShift 12s ease infinite;
+        min-height: 100vh;
+        color: #2c3e50;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      @keyframes gradientShift {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .main-container {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(25px);
+        border-radius: 35px;
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.15),
+          0 0 0 1px rgba(255, 255, 255, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        margin: 40px auto;
+        max-width: 1000px;
+      }
+
+      .main-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+        background-size: 200% 100%;
+        animation: shimmer-line 3s ease-in-out infinite;
+        border-radius: 35px 35px 0 0;
+      }
+
+      @keyframes shimmer-line {
+        0%,
+        100% {
+          background-position: -200% 0;
+        }
+        50% {
+          background-position: 200% 0;
+        }
+      }
+
+      .header-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        animation: shimmer 4s infinite;
+      }
+
+      @keyframes shimmer {
+        0% {
+          left: -100%;
+        }
+        50% {
+          left: 100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+
+      .header-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 15px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .progress-section {
+        padding: 30px;
+        background: rgba(248, 250, 252, 0.5);
+      }
+
+      .progress-custom {
+        height: 15px;
+        border-radius: 10px;
+        background: #e5e7eb;
+        overflow: hidden;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .progress-bar-custom {
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        height: 100%;
+        border-radius: 10px;
+        position: relative;
+        overflow: hidden;
+        transition: width 0.5s ease;
+      }
+
+      .progress-bar-custom::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        animation: shimmer-progress 2s infinite;
+      }
+
+      @keyframes shimmer-progress {
+        0% {
+          left: -100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+
+      .step-section {
+        padding: 40px 30px;
+      }
+
+      .step-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .question-card {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 25px;
+        padding: 30px;
+        margin-bottom: 30px;
+        border: 2px solid rgba(102, 126, 234, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .question-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+        background-size: 200% 100%;
+        animation: shimmer-line 3s ease-in-out infinite;
+      }
+
+      .question-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        border-color: rgba(102, 126, 234, 0.3);
+      }
+
+      .question-text {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 20px;
+      }
+
+      .form-check {
+        margin-bottom: 12px;
+        padding-left: 2rem;
+      }
+
+      .form-check-input {
+        width: 1.2rem;
+        height: 1.2rem;
+        margin-top: 0.1rem;
+        border-radius: 50%;
+        border: 2px solid #667eea;
+        background-color: white;
+        transition: all 0.3s ease;
+      }
+
+      .form-check-input:checked {
+        background-color: #667eea;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+      }
+
+      .form-check-label {
+        font-size: 1rem;
+        color: #374151;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+
+      .form-check-label:hover {
+        color: #667eea;
+      }
+
+      .btn-navigation {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 15px 35px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.4s ease;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-navigation::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .btn-navigation:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-navigation:hover::before {
+        left: 100%;
+      }
+
+      .btn-secondary {
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        box-shadow: 0 8px 25px rgba(107, 114, 128, 0.3);
+      }
+
+      .btn-secondary:hover {
+        box-shadow: 0 12px 35px rgba(107, 114, 128, 0.4);
+      }
+
+      .demographic-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      .form-control {
+        border-radius: 15px;
+        border: 2px solid #e5e7eb;
+        padding: 12px 20px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .form-select {
+        border-radius: 15px;
+        border: 2px solid #e5e7eb;
+        padding: 12px 20px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .step {
+        display: none;
+      }
+
+      .step.active {
+        display: block;
+        animation: fadeInUp 0.5s ease-out;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .navigation-buttons {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 40px;
+        padding: 0 30px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .header-title {
+          font-size: 2rem;
+        }
+
+        .main-container {
+          margin: 20px;
+        }
+
+        .navigation-buttons {
+          flex-direction: column;
+          gap: 15px;
+        }
+      }
+    </style>
   </head>
-  <body class="bg-light">
-    <!-- Header fijo -->
-    <nav class="navbar navbar-light bg-white fixed-top shadow-sm">
-      <div class="container-fluid">
-        <!-- <span class="navbar-brand mb-0 h5"
-          >Cuestionario: Estilo de Apego y Triada Oscura</span 
-        >-->
-      </div>
-    </nav>
 
-    <div class="container" style="padding-top: 70px">
-      <!-- Barra de Progreso -->
-      <div class="mb-4">
-        <div class="progress">
-          <div
-            id="barraProgreso"
-            class="progress-bar bg-success"
-            role="progressbar"
-            style="width: 0%"
-          >
-            0%
+  <body>
+    <div class="container-fluid">
+      <div class="main-container">
+        <!-- Header -->
+        <div class="header-section">
+          <h1 class="header-title">
+            <i class="fas fa-clipboard-list"></i>
+            Test de Personalidad
+          </h1>
+          <p class="mb-0">
+            Análisis completo de apego emocional y rasgos de personalidad
+          </p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-section">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="fw-bold">Progreso del Test</span>
+            <span id="progressText" class="badge bg-primary">Paso 1 de 4</span>
+          </div>
+          <div class="progress-custom">
+            <div
+              id="progressBar"
+              class="progress-bar-custom"
+              style="width: 25%"
+            ></div>
           </div>
         </div>
-      </div>
 
-      <form id="surveyForm" action="/submit" method="post">
-        <!-- Paso 1: Datos Demográficos -->
-        <div id="paso1" class="step active">
-          <h4 class="text-center mb-4 text-primary">Información Personal</h4>
-          <div class="question-container demographic-container">
-            <div class="row">
-              <div class="col-md-4 mb-3">
-                <label for="edad" class="form-label fw-bold">Edad:</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="edad"
-                  name="edad"
-                  min="16"
-                  max="99"
-                  required
-                  placeholder="Ej: 21"
-                />
+        <!-- Form -->
+        <form id="surveyForm" action="/submit" method="post">
+          <!-- Paso 1: Datos Demográficos -->
+          <div id="paso1" class="step active">
+            <div class="step-section">
+              <h2 class="step-title">
+                <i class="fas fa-user"></i>
+                Información Personal
+              </h2>
+
+              <div class="demographic-card">
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <label for="edad" class="form-label fw-bold">
+                      <i class="fas fa-calendar"></i> Edad:
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="edad"
+                      name="edad"
+                      min="16"
+                      max="100"
+                      required
+                      placeholder="Ej: 25"
+                    />
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="sexo" class="form-label fw-bold">
+                      <i class="fas fa-venus-mars"></i> Sexo:
+                    </label>
+                    <select class="form-select" id="sexo" name="sexo" required>
+                      <option value="">Seleccionar...</option>
+                      <option value="Masculino">Masculino</option>
+                      <option value="Femenino">Femenino</option>
+                      <option value="Otro">Otro</option>
+                      <option value="Prefiero no decir">
+                        Prefiero no decir
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="carrera" class="form-label fw-bold">
+                      <i class="fas fa-graduation-cap"></i> Carrera/Profesión:
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="carrera"
+                      name="carrera"
+                      required
+                      placeholder="Ej: Psicología"
+                    />
+                  </div>
+                </div>
               </div>
+            </div>
+          </div>
 
-              <div class="col-md-4 mb-3">
-                <label for="sexo" class="form-label fw-bold">Sexo:</label>
-                <select class="form-select" id="sexo" name="sexo" required>
-                  <option value="">Seleccionar...</option>
-                  <option value="Masculino">Masculino</option>
-                  <option value="Femenino">Femenino</option>
-                  <option value="Otro">Otro</option>
-                  <option value="Prefiero no decir">Prefiero no decir</option>
-                </select>
+          <!-- Paso 2: Preguntas CaMir-R (Apego) -->
+          <div id="paso2" class="step">
+            <div class="step-section">
+              <h2 class="step-title">
+                <i class="fas fa-heart"></i>
+                Cuestionario de Apego Emocional
+              </h2>
+
+              {% for codigo, pregunta in preguntas_apego %}
+              <div class="question-card">
+                <div class="question-text">
+                  <i class="fas fa-question-circle"></i>
+                  {{ pregunta }}
+                </div>
+                <div class="row">
+                  {% for valor, etiqueta in opciones_respuesta %}
+                  <div class="col-md-2 col-6 mb-2">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="{{ codigo }}"
+                        id="{{ codigo }}_{{ valor }}"
+                        value="{{ valor }}"
+                        required
+                      />
+                      <label
+                        class="form-check-label"
+                        for="{{ codigo }}_{{ valor }}"
+                      >
+                        {{ etiqueta }}
+                      </label>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
               </div>
+              {% endfor %}
+            </div>
+          </div>
 
-              <div class="col-md-4 mb-3">
-                <label for="carrera" class="form-label fw-bold">Carrera:</label>
-                <select
-                  class="form-select"
-                  id="carrera"
-                  name="carrera"
-                  required
-                >
-                  <option value="">Seleccionar...</option>
-                  <option value="Administración">Administración</option>
-                  <option value="Adm. de Negocios Internacionales">
-                    Adm. de Negocios Internacionales
-                  </option>
-                  <option value="Arquitectura">Arquitectura</option>
-                  <option value="Contabilidad y Finanzas">
-                    Contabilidad y Finanzas
-                  </option>
-                  <option value="Ing. en Ciencia de Datos">
-                    Ing. en Ciencia de Datos
-                  </option>
-                  <option value="Derecho">Derecho</option>
-                  <option value="Ingeniería Civil">Ingeniería Civil</option>
-                  <option value="Ing. de Computación y Sistemas">
-                    Ing. de Computación y Sistemas
-                  </option>
-                  <option value="Ingeniería Industrial">
-                    Ingeniería Industrial
-                  </option>
-                  <option value="Ing. en Inteligencia Artificial y Robótica">
-                    Ing. en Inteligencia Artificial y Robótica
-                  </option>
-                  <option value="Odontología">Odontología</option>
-                  <option value="Psicología">Psicología</option>
-                  <option value="Medicina Humana">Medicina Humana</option>
-                  <option
-                    value="Ing. en Ciberseguridad y Análisis Forense Digital"
+          <!-- Paso 3: Preguntas SD3 (Triada Oscura) -->
+          <div id="paso3" class="step">
+            <div class="step-section">
+              <h2 class="step-title">
+                <i class="fas fa-mask"></i>
+                Cuestionario de Rasgos de Personalidad
+              </h2>
+
+              {% for codigo, pregunta in preguntas_sd3 %}
+              <div class="question-card">
+                <div class="question-text">
+                  <i class="fas fa-question-circle"></i>
+                  {{ pregunta }}
+                </div>
+                <div class="row">
+                  {% for valor, etiqueta in opciones_respuesta %}
+                  <div class="col-md-2 col-6 mb-2">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="{{ codigo }}"
+                        id="{{ codigo }}_{{ valor }}"
+                        value="{{ valor }}"
+                        required
+                      />
+                      <label
+                        class="form-check-label"
+                        for="{{ codigo }}_{{ valor }}"
+                      >
+                        {{ etiqueta }}
+                      </label>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Paso 4: Confirmación -->
+          <div id="paso4" class="step">
+            <div class="step-section">
+              <h2 class="step-title">
+                <i class="fas fa-check-circle"></i>
+                Confirmar y Enviar
+              </h2>
+
+              <div class="question-card text-center">
+                <div class="question-text">
+                  <i
+                    class="fas fa-clipboard-check"
+                    style="font-size: 4rem; color: #667eea; margin-bottom: 20px"
+                  ></i>
+                  <h3>¡Has completado todas las preguntas!</h3>
+                  <p class="lead">
+                    Revisa tus respuestas y haz clic en "Analizar mi
+                    Personalidad" para obtener tus resultados detallados.
+                  </p>
+                </div>
+
+                <div class="mt-4">
+                  <button
+                    type="submit"
+                    class="btn btn-navigation"
+                    style="font-size: 1.3rem; padding: 20px 40px"
                   >
-                    Ing. en Ciberseguridad y Análisis Forense Digital
-                  </option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Paso 2: Apego Seguro (prefijo "seg_") -->
-        <div id="paso2" class="step">
-          <h4 class="text-center mb-4 text-success">Apego Seguro</h4>
-          {% for clave, texto in preguntas_apego %} {% if
-          clave.startswith("seg_") %}
-          <div class="question-container">
-            <label class="form-label fw-bold">{{ texto }}</label>
-            <div class="radio-group">
-              {% for valor, etiqueta in opciones_respuesta %}
-              <div class="radio-item">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="{{ clave }}"
-                    id="{{ clave }}_{{ valor }}"
-                    value="{{ valor }}"
-                    required
-                  />
-                  <label class="form-check-label" for="{{ clave }}_{{ valor }}">
-                    {{ etiqueta }}
-                  </label>
+                    <i class="fas fa-brain"></i>
+                    Analizar mi Personalidad
+                  </button>
                 </div>
               </div>
-              {% endfor %}
             </div>
           </div>
-          {% endif %} {% endfor %}
-        </div>
 
-        <!-- Paso 3: Apego Ansioso (prefijo "ans_") -->
-        <div id="paso3" class="step">
-          <h4 class="text-center mb-4 text-warning">Apego Ansioso</h4>
-          {% for clave, texto in preguntas_apego %} {% if
-          clave.startswith("ans_") %}
-          <div class="question-container">
-            <label class="form-label fw-bold">{{ texto }}</label>
-            <div class="radio-group">
-              {% for valor, etiqueta in opciones_respuesta %}
-              <div class="radio-item">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="{{ clave }}"
-                    id="{{ clave }}_{{ valor }}"
-                    value="{{ valor }}"
-                    required
-                  />
-                  <label class="form-check-label" for="{{ clave }}_{{ valor }}">
-                    {{ etiqueta }}
-                  </label>
-                </div>
-              </div>
-              {% endfor %}
-            </div>
+          <!-- Navigation Buttons -->
+          <div class="navigation-buttons">
+            <button
+              type="button"
+              id="prevBtn"
+              class="btn btn-navigation btn-secondary"
+              onclick="changeStep(-1)"
+            >
+              <i class="fas fa-arrow-left"></i> Anterior
+            </button>
+            <button
+              type="button"
+              id="nextBtn"
+              class="btn btn-navigation"
+              onclick="changeStep(1)"
+            >
+              Siguiente <i class="fas fa-arrow-right"></i>
+            </button>
           </div>
-          {% endif %} {% endfor %}
-        </div>
-
-        <!-- Paso 4: Apego Evitativo (prefijo "evit_") -->
-        <div id="paso4" class="step">
-          <h4 class="text-center mb-4 text-info">Apego Evitativo</h4>
-          {% for clave, texto in preguntas_apego %} {% if
-          clave.startswith("evit_") %}
-          <div class="question-container">
-            <label class="form-label fw-bold">{{ texto }}</label>
-            <div class="radio-group">
-              {% for valor, etiqueta in opciones_respuesta %}
-              <div class="radio-item">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="{{ clave }}"
-                    id="{{ clave }}_{{ valor }}"
-                    value="{{ valor }}"
-                    required
-                  />
-                  <label class="form-check-label" for="{{ clave }}_{{ valor }}">
-                    {{ etiqueta }}
-                  </label>
-                </div>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-          {% endif %} {% endfor %}
-        </div>
-
-        <!-- Paso 5: Apego Desorganizado (prefijo "desorg_") -->
-        <div id="paso5" class="step">
-          <h4 class="text-center mb-4 text-danger">Apego Desorganizado</h4>
-          {% for clave, texto in preguntas_apego %} {% if
-          clave.startswith("desorg_") %}
-          <div class="question-container">
-            <label class="form-label fw-bold">{{ texto }}</label>
-            <div class="radio-group">
-              {% for valor, etiqueta in opciones_respuesta %}
-              <div class="radio-item">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="{{ clave }}"
-                    id="{{ clave }}_{{ valor }}"
-                    value="{{ valor }}"
-                    required
-                  />
-                  <label class="form-check-label" for="{{ clave }}_{{ valor }}">
-                    {{ etiqueta }}
-                  </label>
-                </div>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-          {% endif %} {% endfor %}
-        </div>
-
-        <!-- Paso 6: Maquiavelismo (prefijo "maq_") -->
-        <div id="paso6" class="step">
-          <h4 class="text-center mb-4 text-dark">Maquiavelismo</h4>
-          {% for clave, texto in preguntas_sd3 %} {% if clave.startswith("maq_")
-          %}
-          <div class="question-container">
-            <label class="form-label fw-bold">{{ texto }}</label>
-            <div class="radio-group">
-              {% for valor, etiqueta in opciones_respuesta %}
-              <div class="radio-item">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="{{ clave }}"
-                    id="{{ clave }}_{{ valor }}"
-                    value="{{ valor }}"
-                    required
-                  />
-                  <label class="form-check-label" for="{{ clave }}_{{ valor }}">
-                    {{ etiqueta }}
-                  </label>
-                </div>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-          {% endif %} {% endfor %}
-        </div>
-
-        <!-- Paso 7: Narcisismo (prefijo "nar_") -->
-        <div id="paso7" class="step">
-          <h4 class="text-center mb-4 text-primary">Narcisismo</h4>
-          {% for clave, texto in preguntas_sd3 %} {% if clave.startswith("nar_")
-          %}
-          <div class="question-container">
-            <label class="form-label fw-bold">{{ texto }}</label>
-            <div class="radio-group">
-              {% for valor, etiqueta in opciones_respuesta %}
-              <div class="radio-item">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="{{ clave }}"
-                    id="{{ clave }}_{{ valor }}"
-                    value="{{ valor }}"
-                    required
-                  />
-                  <label class="form-check-label" for="{{ clave }}_{{ valor }}">
-                    {{ etiqueta }}
-                  </label>
-                </div>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-          {% endif %} {% endfor %}
-        </div>
-
-        <!-- Paso 8: Psicopatía (prefijo "psi_") -->
-        <div id="paso8" class="step">
-          <h4 class="text-center mb-4 text-secondary">Psicopatía</h4>
-          {% for clave, texto in preguntas_sd3 %} {% if clave.startswith("psi_")
-          %}
-          <div class="question-container">
-            <label class="form-label fw-bold">{{ texto }}</label>
-            <div class="radio-group">
-              {% for valor, etiqueta in opciones_respuesta %}
-              <div class="radio-item">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="{{ clave }}"
-                    id="{{ clave }}_{{ valor }}"
-                    value="{{ valor }}"
-                    required
-                  />
-                  <label class="form-check-label" for="{{ clave }}_{{ valor }}">
-                    {{ etiqueta }}
-                  </label>
-                </div>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-          {% endif %} {% endfor %}
-        </div>
-      </form>
-    </div>
-
-    <!-- Footer fijo con botones -->
-    <div class="fixed-footer">
-      <div class="container d-flex justify-content-between align-items-center">
-        <button id="btnAnterior" class="btn btn-outline-secondary" disabled>
-          ← Anterior
-        </button>
-        <span id="stepIndicator" class="text-muted"></span>
-        <button id="btnSiguiente" class="btn btn-success">Siguiente →</button>
+        </form>
       </div>
     </div>
 
-    <!-- Bootstrap JS + script para controlar pasos -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-ENjdO4Dr2bkBIFxQpeo5TUbXcRVXpSl0QVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6"
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-      const steps = document.querySelectorAll(".step");
-      const btnNext = document.getElementById("btnSiguiente");
-      const btnPrev = document.getElementById("btnAnterior");
-      const progressBar = document.getElementById("barraProgreso");
-      const stepIndicator = document.getElementById("stepIndicator");
-      let currentStep = 0;
-      const totalSteps = steps.length;
+      let currentStep = 1;
+      const totalSteps = 4;
 
-      const stepNames = [
-        "Información Personal",
-        "Apego Seguro",
-        "Apego Ansioso",
-        "Apego Evitativo",
-        "Apego Desorganizado",
-        "Maquiavelismo",
-        "Narcisismo",
-        "Psicopatía",
-      ];
+      function updateProgress() {
+        const progress = (currentStep / totalSteps) * 100;
+        document.getElementById("progressBar").style.width = progress + "%";
+        document.getElementById(
+          "progressText"
+        ).textContent = `Paso ${currentStep} de ${totalSteps}`;
+      }
 
-      function showStep(index) {
-        steps.forEach((el, i) => {
-          el.classList.toggle("active", i === index);
-        });
+      function showStep(step) {
+        // Ocultar todos los pasos
+        document
+          .querySelectorAll(".step")
+          .forEach((s) => s.classList.remove("active"));
 
-        btnPrev.disabled = index === 0;
-        btnNext.textContent =
-          index === totalSteps - 1 ? "Enviar Respuestas" : "Siguiente →";
+        // Mostrar paso actual
+        document.getElementById(`paso${step}`).classList.add("active");
 
-        const pct = Math.round(((index + 1) / totalSteps) * 100);
-        progressBar.style.width = pct + "%";
-        progressBar.textContent = pct + "%";
+        // Actualizar botones
+        document.getElementById("prevBtn").style.display =
+          step === 1 ? "none" : "inline-block";
+        document.getElementById("nextBtn").style.display =
+          step === totalSteps ? "none" : "inline-block";
 
-        stepIndicator.textContent = `Paso ${index + 1} de ${totalSteps}: ${
-          stepNames[index]
-        }`;
+        // Actualizar progreso
+        updateProgress();
 
-        // Scroll to top when changing steps
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        // Scroll to top
+        window.scrollTo(0, 0);
+      }
+
+      function changeStep(direction) {
+        if (direction === 1 && currentStep < totalSteps) {
+          // Validar paso actual antes de avanzar
+          if (validateCurrentStep()) {
+            currentStep++;
+            showStep(currentStep);
+          }
+        } else if (direction === -1 && currentStep > 1) {
+          currentStep--;
+          showStep(currentStep);
+        }
       }
 
       function validateCurrentStep() {
-        const currentStepElement = steps[currentStep];
+        const currentStepElement = document.getElementById(
+          `paso${currentStep}`
+        );
+        const requiredInputs =
+          currentStepElement.querySelectorAll("[required]");
 
-        if (currentStep === 0) {
-          // Validar datos demográficos
-          const edad = document.getElementById("edad").value;
-          const sexo = document.getElementById("sexo").value;
-          const carrera = document.getElementById("carrera").value;
-
-          if (!edad || !sexo || !carrera) {
-            return false;
-          }
-          return true;
-        } else {
-          // Validar preguntas de radio buttons
-          const radioGroups = {};
-
-          currentStepElement
-            .querySelectorAll('input[type="radio"]')
-            .forEach((radio) => {
-              if (!radioGroups[radio.name]) {
-                radioGroups[radio.name] = [];
-              }
-              radioGroups[radio.name].push(radio);
-            });
-
-          for (const groupName in radioGroups) {
-            const isChecked = radioGroups[groupName].some(
-              (radio) => radio.checked
+        for (let input of requiredInputs) {
+          if (input.type === "radio") {
+            const radioGroup = currentStepElement.querySelectorAll(
+              `[name="${input.name}"]`
             );
-            if (!isChecked) {
+            let checked = false;
+            for (let radio of radioGroup) {
+              if (radio.checked) {
+                checked = true;
+                break;
+              }
+            }
+            if (!checked) {
+              alert(
+                "Por favor completa todas las preguntas antes de continuar."
+              );
               return false;
             }
+          } else if (!input.value.trim()) {
+            alert("Por favor completa todos los campos requeridos.");
+            input.focus();
+            return false;
           }
-          return true;
         }
+        return true;
       }
 
-      btnNext.addEventListener("click", () => {
-        if (!validateCurrentStep()) {
-          if (currentStep === 0) {
-            alert(
-              "Por favor, completa todos los campos de información personal."
-            );
-          } else {
-            alert(
-              "Por favor, responde todas las preguntas antes de continuar."
-            );
+      // Validación del formulario antes del envío
+      document
+        .getElementById("surveyForm")
+        .addEventListener("submit", function (e) {
+          // Validar todos los pasos
+          for (let step = 1; step <= totalSteps - 1; step++) {
+            const stepElement = document.getElementById(`paso${step}`);
+            const requiredInputs = stepElement.querySelectorAll("[required]");
+
+            for (let input of requiredInputs) {
+              if (input.type === "radio") {
+                const radioGroup = stepElement.querySelectorAll(
+                  `[name="${input.name}"]`
+                );
+                let checked = false;
+                for (let radio of radioGroup) {
+                  if (radio.checked) {
+                    checked = true;
+                    break;
+                  }
+                }
+                if (!checked) {
+                  e.preventDefault();
+                  alert(
+                    "Por favor completa todas las preguntas del cuestionario."
+                  );
+                  return false;
+                }
+              } else if (!input.value.trim()) {
+                e.preventDefault();
+                alert("Por favor completa todos los campos requeridos.");
+                return false;
+              }
+            }
           }
-          return;
-        }
 
-        if (currentStep === totalSteps - 1) {
-          // Submit form
-          document.getElementById("surveyForm").submit();
-          return;
-        }
+          // Mostrar loading
+          const submitBtn = document.querySelector('button[type="submit"]');
+          submitBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> Analizando...';
+          submitBtn.disabled = true;
+        });
 
-        currentStep++;
-        showStep(currentStep);
+      // Inicializar
+      showStep(1);
+
+      // Efectos adicionales
+      document.addEventListener("DOMContentLoaded", function () {
+        // Animar las tarjetas de preguntas al entrar en vista
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: "0px 0px -50px 0px",
+        };
+
+        const observer = new IntersectionObserver(function (entries) {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.style.opacity = "1";
+              entry.target.style.transform = "translateY(0)";
+            }
+          });
+        }, observerOptions);
+
+        // Observar todas las tarjetas de preguntas
+        document.querySelectorAll(".question-card").forEach((card) => {
+          card.style.opacity = "0";
+          card.style.transform = "translateY(20px)";
+          card.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+          observer.observe(card);
+        });
       });
-
-      btnPrev.addEventListener("click", () => {
-        if (currentStep === 0) return;
-        currentStep--;
-        showStep(currentStep);
-      });
-
-      // Initialize
-      showStep(currentStep);
     </script>
   </body>
 </html>
