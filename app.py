@@ -19,7 +19,7 @@ print("🔧 Configurando Google Drive...")
 drive_manager = None
 try:
     drive_manager = GoogleDriveManager()
-    if drive_manager.is_available():
+    if drive_manager:
         print("✅ Google Drive Manager inicializado y disponible")
         success, message = drive_manager.test_connection()
         if success:
@@ -146,7 +146,7 @@ def submit():
     # Intentar Google Drive primero
     google_drive_success = False
     try:
-        if drive_manager and drive_manager.is_available():
+        if drive_manager:
             print("☁️ Intentando subir a Google Drive...")
             file_id = drive_manager.upload_csv(csv_data, filename)
             
@@ -159,8 +159,6 @@ def submit():
             print("⚠️ Google Drive no está disponible")
             if drive_manager is None:
                 print("   - Google Drive Manager no inicializado")
-            elif not drive_manager.is_available():
-                print("   - Credenciales o configuración faltante")
     except Exception as e:
         print(f"❌ Error inesperado con Google Drive: {e}")
         import traceback
