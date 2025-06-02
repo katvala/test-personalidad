@@ -15,9 +15,14 @@ app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'dev-key-change-in-production')
 
 # Inicializar Google Drive Manager
+drive_manager = None
 try:
-    drive_manager = GoogleDriveManager()
-    print("🔗 Google Drive Manager inicializado")
+    # Solo intentar Google Drive si tenemos las credenciales
+    if os.path.exists('config/credentials.json') or os.getenv('GOOGLE_DRIVE_CREDENTIALS'):
+        drive_manager = GoogleDriveManager()
+        print("✅ Google Drive Manager inicializado")
+    else:
+        print("📁 Google Drive no configurado, usando solo almacenamiento local")
 except Exception as e:
     print(f"⚠️ Error al inicializar Google Drive: {e}")
     print("📁 La aplicación funcionará solo con guardado local")
@@ -63,8 +68,8 @@ def submit():
     resultado_textual = interpretar_textos(resultado_numerico)
     
     # 6) Crear directorio data si no existe
-    import os
-    os.makedirs("data", exist_ok=True)
+    data_dir = os.path.join(os.path.dirname(__file__), "data")
+    os.makedirs(data_dir, exist_ok=True)
     
     # 7) Preparar datos para CSV y Google Drive
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -142,7 +147,7 @@ def submit():
         print("📁 Continuando con guardado local...")
     
     # 9) Guardar localmente como respaldo (independientemente de Google Drive)
-    csv_path = "data/respuestas.csv"
+    csv_path = os.path.join(data_dir, "respuestas.csv")
     file_exists = os.path.exists(csv_path) and os.path.getsize(csv_path) > 0
     
     with open(csv_path, "a", newline="", encoding="utf-8") as f:
@@ -226,4 +231,6 @@ def descargar_pdf():
     return response
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5002)
+    port = int(os.environ.get("PORT", 5002))
+    debug = os.environ.get("FLASK_ENV") != "production"
+    app.run(host="0.0.0.0", port=port, debug=debug)

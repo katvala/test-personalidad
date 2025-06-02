@@ -1,0 +1,13 @@
+{
+  "name": "test-personalidad",
+  "deployments": {
+    "web": {
+      "buildCommand": "pip install -r requirements.txt",
+      "startCommand": "gunicorn wsgi:app",
+      "environmentVariables": {
+        "PYTHONPATH": ".",
+        "PORT": "${PORT}"
+      }
+    }
+  }
+}
