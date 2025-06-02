@@ -21,11 +21,10 @@ try:
     drive_manager = GoogleDriveManager()
     if drive_manager:
         print("✅ Google Drive Manager inicializado y disponible")
-        success, message = drive_manager.test_connection()
-        if success:
+        if drive_manager.check_connection():
             print("✅ Conexión con Google Drive verificada")
         else:
-            print(f"⚠️ Problema con Google Drive: {message}")
+            print("⚠️ Problema con Google Drive al verificar conexión")
     else:
         print("📁 Google Drive no configurado, usando solo almacenamiento local")
         drive_manager = None
