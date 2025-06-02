@@ -9,6 +9,7 @@ from googleapiclient.http import MediaIoBaseUpload
 from io import BytesIO
 import csv
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -22,11 +23,12 @@ class GoogleDriveManager:
     def _authenticate(self):
         """Autenticar con Google Drive usando cuenta de servicio"""
         try:
-            if not self.credentials_path or not os.path.exists(self.credentials_path):
-                raise FileNotFoundError(f"Archivo de credenciales no encontrado: {self.credentials_path}")
+            if not self.credentials_path:
+                raise ValueError("Contenido JSON de credenciales no encontrado en GOOGLE_CREDENTIALS_PATH")
             
-            creds = service_account.Credentials.from_service_account_file(
-                self.credentials_path, 
+            creds_dict = json.loads(self.credentials_path)
+            creds = service_account.Credentials.from_service_account_info(
+                creds_dict,
                 scopes=['https://www.googleapis.com/auth/drive.file']
             )
             self.service = build('drive', 'v3', credentials=creds)
