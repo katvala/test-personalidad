@@ -139,10 +139,10 @@ def interpretar_textos(resultado):
     umbral_alto = 3.5
     umbral_moderado = 2.5
     
-    # TRIADA OSCURA - Clasificar por niveles
+    # TRIADA OSCURA - Clasificar por niveles con lógica personalizada
     for rasgo in ["Maquiavelismo", "Narcisismo", "Psicopatía"]:
         valor = resultado.get(rasgo, 0)
-        
+
         # Valores altos
         if valor > umbral_alto:
             if rasgo == "Maquiavelismo":
@@ -164,28 +164,43 @@ def interpretar_textos(resultado):
                     "o dificultad para considerar las consecuencias de tus acciones. Sugerencia: trabaja en identificar y "
                     "gestionar tus emociones con técnicas como meditación, respiración consciente o terapia psicológica."
                 )
-        
-        # Valores moderados
+        # Valores intermedios (personalización, sin clasificaciones explícitas)
         elif valor > umbral_moderado:
-            if rasgo == "Maquiavelismo":
-                textos["Maquiavelismo Moderado"] = (
-                    "Muestras un nivel moderado de maquiavelismo: en ocasiones puedes usar estrategias para influir en otros, "
-                    "pero generalmente mantienes un balance entre tus intereses y los de los demás. Esto puede ayudarte a "
-                    "navegar situaciones sociales complejas, siempre que mantengas la ética como prioridad."
-                )
-            elif rasgo == "Narcisismo":
-                textos["Narcisismo Moderado"] = (
-                    "Presentas un nivel moderado de narcisismo: valoras el reconocimiento y tienes confianza en ti mismo, "
-                    "lo que puede ser positivo para conseguir metas, siempre que no desatiendas las necesidades de los demás. "
-                    "Este nivel de autoconfianza puede ser beneficioso en muchos contextos profesionales y sociales."
-                )
-            elif rasgo == "Psicopatía":
-                textos["Psicopatía Moderada"] = (
-                    "Muestras un nivel moderado de rasgos asociados a psicopatía: ocasionalmente puedes actuar por impulso "
-                    "o mostrar cierta frialdad en situaciones específicas. Es importante que desarrolles más conciencia "
-                    "sobre cómo tus acciones afectan a otros y practiques la empatía activamente."
-                )
-        
+            if 2.5 < valor < 3.5:
+                if rasgo == "Maquiavelismo":
+                    textos["Maquiavelismo"] = (
+                        "Tu puntuación en maquiavelismo se encuentra en un rango intermedio. Esto sugiere que, aunque puedes "
+                        "ser capaz de pensar estratégicamente o proteger tus intereses en situaciones sociales, no sueles recurrir "
+                        "habitualmente a la manipulación. Mantener esta conciencia puede ayudarte a establecer relaciones basadas en la confianza."
+                    )
+                elif rasgo == "Narcisismo":
+                    textos["Narcisismo"] = (
+                        "Tu puntuación en narcisismo es intermedia. Puedes tener confianza en ti mismo y disfrutar del reconocimiento, "
+                        "pero sin que esto domine tus relaciones. Este equilibrio puede ser útil para alcanzar metas y mantener relaciones saludables."
+                    )
+                elif rasgo == "Psicopatía":
+                    textos["Psicopatía"] = (
+                        "Tu puntuación en psicopatía es intermedia. Puedes mostrar cierta capacidad para tomar decisiones objetivas "
+                        "y actuar con firmeza, pero sin perder de vista las consecuencias emocionales para ti y para los demás."
+                    )
+            else:
+                # Para valores moderados fuera de 2.5-3.5, mantener el texto general sin clasificaciones
+                if rasgo == "Maquiavelismo":
+                    textos["Maquiavelismo"] = (
+                        "Muestras algunos rasgos de maquiavelismo: puedes usar estrategias para influir en otros en ciertas situaciones, "
+                        "pero generalmente mantienes tus valores y la ética en tus interacciones."
+                    )
+                elif rasgo == "Narcisismo":
+                    textos["Narcisismo"] = (
+                        "Presentas algunos rasgos de narcisismo: valoras el reconocimiento y tienes confianza en ti mismo, "
+                        "lo que puede ser positivo para conseguir metas, siempre que no desatiendas las necesidades de los demás."
+                    )
+                elif rasgo == "Psicopatía":
+                    textos["Psicopatía"] = (
+                        "Muestras algunos rasgos asociados a psicopatía: ocasionalmente puedes actuar por impulso "
+                        "o mostrar cierta frialdad en situaciones específicas. Es importante que desarrolles conciencia "
+                        "sobre cómo tus acciones afectan a otros y practiques la empatía activamente."
+                    )
         # Valores bajos
         else:
             if rasgo == "Maquiavelismo":
@@ -217,8 +232,8 @@ def interpretar_textos(resultado):
             "formar relaciones saludables y estables. Este es un patrón muy positivo que favorece tu bienestar."
         )
     elif valor_apego_seguro > umbral_moderado:
-        textos["Apego Seguro Moderado"] = (
-            "Presentas un nivel moderado de apego seguro: generalmente confías en los demás y te sientes cómodo "
+        textos["Apego Seguro"] = (
+            "Tu puntuación en apego seguro es intermedia. Generalmente confías en los demás y te sientes cómodo "
             "en las relaciones cercanas, aunque ocasionalmente puedes experimentar inseguridades. Tu estilo de vinculación "
             "te permite mantener relaciones mayormente saludables."
         )
@@ -226,7 +241,6 @@ def interpretar_textos(resultado):
     # Estilos de apego inseguros
     for estilo in ["Apego Ansioso", "Apego Evitativo", "Apego Desorganizado"]:
         valor = resultado.get(estilo, 0)
-        
         # Valores altos
         if valor > umbral_alto:
             if estilo == "Apego Ansioso":
@@ -250,38 +264,77 @@ def interpretar_textos(resultado):
                     "Sugerencia: llevar un diario emocional y buscar apoyo profesional puede ayudarte a reconocer patrones y "
                     "estabilizar tus vínculos."
                 )
-        
-        # Valores moderados
+        # Valores intermedios (personalización, sin clasificaciones explícitas)
         elif valor > umbral_moderado:
-            if estilo == "Apego Ansioso":
-                textos["Apego Ansioso Moderado"] = (
-                    "Muestras un nivel moderado de apego ansioso: en ciertas situaciones puedes preocuparte por el estado "
-                    "de tus relaciones o buscar confirmación de que los demás te valoran. Esto puede ser natural en momentos "
-                    "de estrés, aunque generalmente mantienes un equilibrio."
-                )
-            elif estilo == "Apego Evitativo":
-                textos["Apego Evitativo Moderado"] = (
-                    "Presentas un nivel moderado de apego evitativo: valoras tu independencia y a veces prefieres mantener "
-                    "cierta distancia emocional, aunque puedes formar vínculos cuando te sientes seguro. Encontrar un balance "
-                    "entre autonomía y conexión podría beneficiarte."
-                )
-            elif estilo == "Apego Desorganizado":
-                textos["Apego Desorganizado Moderado"] = (
-                    "Muestras un nivel moderado de apego desorganizado: en ocasiones puedes sentirte confundido sobre cómo "
-                    "acercarte a los demás o enviar señales contradictorias en tus relaciones. Reflexionar sobre tus patrones "
-                    "de comunicación podría ayudarte a establecer vínculos más claros."
-                )
+            if 2.5 < valor < 3.5:
+                if estilo == "Apego Ansioso":
+                    textos["Apego Ansioso"] = (
+                        "Tu puntuación en apego ansioso es intermedia. En ciertas situaciones puedes preocuparte por el estado "
+                        "de tus relaciones o buscar confirmación de que los demás te valoran. Esto puede ser natural en momentos "
+                        "de estrés, aunque generalmente mantienes un equilibrio."
+                    )
+                elif estilo == "Apego Evitativo":
+                    textos["Apego Evitativo"] = (
+                        "Tu puntuación en apego evitativo es intermedia. Valoras tu independencia y a veces prefieres mantener "
+                        "cierta distancia emocional, aunque puedes formar vínculos cuando te sientes seguro. Encontrar un balance "
+                        "entre autonomía y conexión podría beneficiarte."
+                    )
+                elif estilo == "Apego Desorganizado":
+                    textos["Apego Desorganizado"] = (
+                        "Tu puntuación en apego desorganizado es intermedia. En ocasiones puedes sentirte confundido sobre cómo "
+                        "acercarte a los demás o enviar señales contradictorias en tus relaciones. Reflexionar sobre tus patrones "
+                        "de comunicación podría ayudarte a establecer vínculos más claros."
+                    )
+            else:
+                if estilo == "Apego Ansioso":
+                    textos["Apego Ansioso"] = (
+                        "Muestras algunos rasgos de apego ansioso: en ciertas situaciones puedes preocuparte por el estado "
+                        "de tus relaciones o buscar confirmación de que los demás te valoran. Esto puede ser natural en momentos "
+                        "de estrés, aunque generalmente mantienes un equilibrio."
+                    )
+                elif estilo == "Apego Evitativo":
+                    textos["Apego Evitativo"] = (
+                        "Presentas algunos rasgos de apego evitativo: valoras tu independencia y a veces prefieres mantener "
+                        "cierta distancia emocional, aunque puedes formar vínculos cuando te sientes seguro. Encontrar un balance "
+                        "entre autonomía y conexión podría beneficiarte."
+                    )
+                elif estilo == "Apego Desorganizado":
+                    textos["Apego Desorganizado"] = (
+                        "Muestras algunos rasgos de apego desorganizado: en ocasiones puedes sentirte confundido sobre cómo "
+                        "acercarte a los demás o enviar señales contradictorias en tus relaciones. Reflexionar sobre tus patrones "
+                        "de comunicación podría ayudarte a establecer vínculos más claros."
+                    )
     
     # Si tiene un perfil equilibrado (ninguno alto)
     tiene_altos = any(resultado.get(rasgo, 0) > umbral_alto for rasgo in 
                      ["Maquiavelismo", "Narcisismo", "Psicopatía", 
                       "Apego Ansioso", "Apego Evitativo", "Apego Desorganizado"])
-    
     if not tiene_altos:
         textos["Perfil Equilibrado"] = (
             "¡Felicidades! Tu perfil muestra niveles equilibrados en todas las dimensiones evaluadas. "
             "Esto sugiere que tienes buenas habilidades de autorregulación emocional y relacional, lo que "
             "contribuye positivamente a tu bienestar psicológico y social."
+        )
+
+    # Combinaciones de estilos de apego mixtos
+    alto_apegos = [k for k in ["Apego Ansioso", "Apego Evitativo", "Apego Desorganizado"] if resultado.get(k, 0) > umbral_alto]
+    if "Apego Ansioso" in alto_apegos and "Apego Evitativo" in alto_apegos:
+        textos["Apego Mixto (Ansioso + Evitativo)"] = (
+            "Tu perfil sugiere una combinación de apego ansioso y evitativo. Esto puede reflejar una tensión interna entre "
+            "el deseo profundo de cercanía y la necesidad de protegerte emocionalmente. Es posible que temas el rechazo, "
+            "pero al mismo tiempo mantengas una distancia emocional para evitar el dolor. Explorar estas dinámicas puede ayudarte "
+            "a construir relaciones más estables y satisfactorias."
+        )
+    if "Apego Ansioso" in alto_apegos and "Apego Desorganizado" in alto_apegos:
+        textos["Apego Mixto (Ansioso + Desorganizado)"] = (
+            "Tu perfil revela una combinación de apego ansioso y desorganizado, lo que puede manifestarse en relaciones inestables, "
+            "con preocupación por el abandono y comportamientos contradictorios. Reconocer estos patrones es el primer paso para trabajar "
+            "hacia vínculos más seguros y satisfactorios."
+        )
+    if "Apego Evitativo" in alto_apegos and "Apego Desorganizado" in alto_apegos:
+        textos["Apego Mixto (Evitativo + Desorganizado)"] = (
+            "Tu perfil muestra una mezcla de apego evitativo y desorganizado. Puedes tender a evitar la cercanía y, al mismo tiempo, "
+            "experimentar confusión o ambivalencia en tus relaciones. Es útil explorar estos patrones para entender mejor tus necesidades emocionales."
         )
     
     # Descripción general de personalidad
@@ -364,6 +417,32 @@ def interpretar_textos(resultado):
     # Siempre incluir Triada Dominante
     if triada_dom:
         textos["Triada Oscura Dominante"] = f"Tu rasgo oscuro dominante es: {triada_dom}."
+
+        # Interpretación combinada para mezclas específicas
+        combinacion = (est_dom, triada_dom)
+
+        if combinacion == ("Apego Evitativo", "Psicopatía"):
+            textos["Interpretación Combinada"] = (
+                "Tu combinación de apego evitativo con altos rasgos de psicopatía puede reflejar una tendencia a evitar la cercanía emocional, "
+                "mientras mantienes una actitud pragmática o incluso fría en tus relaciones. Puedes sentirte más cómodo resolviendo las cosas por tu cuenta "
+                "y priorizando la lógica sobre la emoción. Es recomendable explorar formas seguras de conectar con otros sin sentir que pierdes autonomía."
+            )
+        elif combinacion == ("Apego Ansioso", "Maquiavelismo"):
+            textos["Interpretación Combinada"] = (
+                "Tu estilo de apego ansioso combinado con maquiavelismo sugiere que puedes experimentar ansiedad en tus vínculos, acompañada de un enfoque estratégico "
+                "para asegurar la cercanía o el control en las relaciones. Es importante que examines si tus intentos de conexión se ven influenciados por el temor a ser rechazado "
+                "y por la necesidad de tener el control. Trabaja en cultivar relaciones basadas en la confianza mutua, no en el miedo o la manipulación."
+            )
+        elif combinacion == ("Apego Seguro", "Maquiavelismo"):
+            textos["Interpretación Combinada"] = (
+                "Aunque tienes una base segura en tus relaciones, el maquiavelismo indica que puedes utilizar estrategias sociales para obtener resultados. "
+                "Esto puede ser una ventaja si sabes cuándo actuar con autenticidad y cuándo es útil aplicar un enfoque más racional. Asegúrate de mantener un equilibrio ético."
+            )
+        elif combinacion == ("Apego Desorganizado", "Psicopatía"):
+            textos["Interpretación Combinada"] = (
+                "Esta combinación puede reflejar conflictos internos intensos: por un lado, dificultades para estabilizar relaciones (apego desorganizado), "
+                "y por otro, una actitud distante o incluso hostil hacia los demás. Considera buscar apoyo emocional o terapéutico para reconocer tus patrones relacionales y su impacto."
+            )
 
     # Mensaje de apoyo final
     textos["Mensaje de Apoyo"] = (
