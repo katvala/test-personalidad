@@ -3,7 +3,7 @@ import csv
 import os
 import datetime
 from dotenv import load_dotenv
-from utils import interpretar_respuestas, interpretar_textos, LISTA_CaMiR, LISTA_SD3, OPCIONES_RESPUESTA
+from utils import interpretar_respuestas, interpretar_textos, generate_personalized_result, LISTA_CaMiR, LISTA_SD3, OPCIONES_RESPUESTA
 from google_drive import GoogleDriveManager
 from weasyprint import HTML, CSS
 from jinja2 import Template
@@ -69,7 +69,10 @@ def submit():
     # 4) Cálculo numérico de promedios incluyendo dominantes
     resultado_numerico = interpretar_respuestas(respuestas)
     
-    # 5) Cálculo textual (solo altos + dominantes + apoyo)
+    # 5) Generar interpretación personalizada y empática
+    resultado_personalizado = generate_personalized_result(respuestas)
+    
+    # 6) Cálculo textual legacy (mantenido para compatibilidad)
     resultado_textual = interpretar_textos(resultado_numerico)
     
     # 6) Crear directorio data si no existe
@@ -247,6 +250,7 @@ def submit():
     # Guardar resultados en la sesión para el PDF
     session['interpretacion'] = resultado_numerico
     session['interpretacion_texto'] = resultado_textual
+    session['resultado_personalizado'] = resultado_personalizado
     session['puntuaciones'] = puntuaciones_numericas
     session['dominantes'] = puntuaciones_categoricas
     session['chartData'] = chart_data
@@ -255,6 +259,7 @@ def submit():
         "result.html",
         interpretacion=resultado_numerico,
         interpretacion_texto=resultado_textual,
+        resultado_personalizado=resultado_personalizado,
         chartData=chart_data,
         puntuaciones=puntuaciones_numericas,
         dominantes=puntuaciones_categoricas
@@ -270,6 +275,7 @@ def descargar_pdf():
         "result_pdf.html",
         interpretacion=session.get('interpretacion', {}),
         interpretacion_texto=session.get('interpretacion_texto', {}),
+        resultado_personalizado=session.get('resultado_personalizado', {}),
         puntuaciones=session.get('puntuaciones', {}),
         dominantes=session.get('dominantes', {}),
         fecha_generacion=current_datetime

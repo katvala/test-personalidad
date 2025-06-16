@@ -192,10 +192,66 @@
       </div>
     </div>
 
-    <!-- Interpretación Textual -->
-    {% if interpretacion_texto %}
+    <!-- Interpretación Personalizada -->
+    {% if resultado_personalizado %}
     <div class="section">
-      <h2 class="section-title">Interpretación Personalizada</h2>
+      <h2 class="section-title">Tu Perfil Personalizado</h2>
+
+      <!-- Estilo de Apego Principal -->
+      {% if resultado_personalizado.get('Estilo de Apego') %}
+      <div class="interpretation">
+        <h4>
+          Tu Estilo de Apego: {{ resultado_personalizado['Estilo de Apego'] }}
+        </h4>
+        {% if resultado_personalizado.get('Interpretacion') %}
+        <p>{{ resultado_personalizado['Interpretacion'] }}</p>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- Rasgo Adicional si existe -->
+      {% if resultado_personalizado.get('Rasgo Adicional') %}
+      <div class="interpretation">
+        <h4>Rasgo Destacado</h4>
+        <p>{{ resultado_personalizado['Rasgo Adicional'] }}</p>
+      </div>
+      {% endif %}
+
+      <!-- Mensaje de Apoyo -->
+      {% if resultado_personalizado.get('Mensaje de Apoyo') %}
+      <div
+        class="interpretation"
+        style="background: #e8f4fd; border-left-color: #4facfe"
+      >
+        <h4>Mensaje de Apoyo</h4>
+        <p>{{ resultado_personalizado['Mensaje de Apoyo'] }}</p>
+      </div>
+      {% endif %}
+
+      <!-- Puntuaciones Resumidas -->
+      {% if resultado_personalizado.get('Tus Puntuaciones') %}
+      <div class="interpretation">
+        <h4>Resumen de tus Puntuaciones</h4>
+        {% for categoria, puntuaciones in resultado_personalizado['Tus
+        Puntuaciones'].items() %}
+        <div style="margin-bottom: 10px">
+          <strong style="color: #667eea">{{ categoria }}:</strong><br />
+          {% for nombre, valor in puntuaciones.items() %}
+          <span style="margin-right: 15px"
+            >{{ nombre }}: <strong>{{ valor }}/5</strong></span
+          >
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Interpretación Textual Legacy (comentada) -->
+    <!-- {% if interpretacion_texto %}
+    <div class="section">
+      <h2 class="section-title">Interpretación Detallada</h2>
       {% for categoria, contenido in interpretacion_texto.items() %}
       <div class="interpretation">
         <h4>{{ categoria }}</h4>
@@ -208,30 +264,7 @@
       </div>
       {% endfor %}
     </div>
-    {% endif %}
-
-    <!-- Insights Personalizados -->
-    <div class="section">
-      <h2 class="section-title">Insights Personalizados</h2>
-      {% for categoria, puntuacion in puntuaciones.items() %}
-      <div class="insight-card">
-        <h5>{{ categoria }}</h5>
-        <p>
-          {% if puntuacion >= 4.0 %} Tienes una puntuación muy alta en {{
-          categoria.lower() }}. Esto sugiere que este rasgo es muy prominente en
-          tu personalidad y puede influir significativamente en tu
-          comportamiento y relaciones. {% elif puntuacion >= 3.0 %} Muestras un
-          nivel moderado-alto de {{ categoria.lower() }}. Esto indica que este
-          rasgo está presente de manera notable en tu personalidad. {% elif
-          puntuacion >= 2.0 %} Tu nivel de {{ categoria.lower() }} es moderado.
-          Este rasgo se manifiesta de manera equilibrada en tu personalidad. {%
-          else %} Tu puntuación en {{ categoria.lower() }} es relativamente
-          baja. Esto puede significar que este rasgo no es una característica
-          dominante en tu personalidad. {% endif %}
-        </p>
-      </div>
-      {% endfor %}
-    </div>
+    {% endif %} -->
 
     <div class="footer">
       <p>Test de Personalidad - Generado automáticamente</p>

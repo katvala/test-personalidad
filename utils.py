@@ -129,8 +129,243 @@ def interpretar_respuestas(respuestas):
 
     return resultado
 
+def generate_personalized_result(respuestas_usuario):
+    """
+    Genera un resultado personalizado y empático basado en las respuestas del usuario.
+    Implementa:
+    - Detección de combinaciones de estilos cuando hay puntajes similares
+    - Muestra solo los estilos más relevantes
+    - Justifica resultados con interpretaciones personalizadas
+    - Usa lenguaje empático, no clínico
+    - Incluye mensaje informativo sobre OBE
+    """
+    # Primero calculamos las puntuaciones numéricas
+    resultado_numerico = interpretar_respuestas(respuestas_usuario)
+    
+    # Definir umbrales para detección de estilos relevantes
+    umbral_alto = 3.5
+    umbral_moderado_alto = 3.0  # Reducido para detectar mejor los estilos relevantes
+    umbral_combinacion = 0.5  # Aumentado para ser menos estricto en combinaciones
+    
+    # Analizar patrones de apego
+    estilos_apego = {
+        "Apego Seguro": resultado_numerico["Apego Seguro"],
+        "Apego Ansioso": resultado_numerico["Apego Ansioso"], 
+        "Apego Evitativo": resultado_numerico["Apego Evitativo"],
+        "Apego Desorganizado": resultado_numerico["Apego Desorganizado"]
+    }
+    
+    # Debug: imprimir puntuaciones para verificar
+    print(f"🔍 DEBUG - Puntuaciones de apego: {estilos_apego}")
+    
+    # Detectar estilos relevantes (altos)
+    estilos_altos = {k: v for k, v in estilos_apego.items() if v >= umbral_moderado_alto}
+    print(f"🔍 DEBUG - Estilos altos (>={umbral_moderado_alto}): {estilos_altos}")
+    
+    # Detectar combinaciones (puntajes similares entre estilos altos)
+    combinaciones_detectadas = []
+    if len(estilos_altos) >= 2:
+        estilos_items = list(estilos_altos.items())
+        for i in range(len(estilos_items)):
+            for j in range(i+1, len(estilos_items)):
+                nombre1, puntaje1 = estilos_items[i]
+                nombre2, puntaje2 = estilos_items[j]
+                
+                # Si ambos son relevantes y están relativamente cerca
+                if abs(puntaje1 - puntaje2) <= umbral_combinacion:
+                    combinaciones_detectadas.append((nombre1, nombre2, puntaje1, puntaje2))
+    
+    print(f"🔍 DEBUG - Combinaciones detectadas: {combinaciones_detectadas}")
+    
+    # Generar interpretación personalizada
+    interpretacion_final = {}
+    
+    # Si hay combinaciones significativas, priorizarlas
+    if combinaciones_detectadas:
+        # Tomar la combinación con puntajes más altos
+        combinacion_principal = max(combinaciones_detectadas, 
+                                  key=lambda x: (x[2] + x[3]) / 2)
+        
+        estilo1, estilo2, punt1, punt2 = combinacion_principal
+        print(f"🔍 DEBUG - Combinación principal: {estilo1} ({punt1}) + {estilo2} ({punt2})")
+        
+        # Generar interpretación combinada empática
+        if ("Ansioso" in estilo1 and "Evitativo" in estilo2) or ("Ansioso" in estilo2 and "Evitativo" in estilo1):
+            interpretacion_final["Estilo de Apego"] = "Ansioso-Evitativo"
+            interpretacion_final["Interpretacion"] = (
+                f"Tu forma de relacionarte muestra características tanto ansiosas como evitativas. "
+                f"Esto significa que, por un lado, valoras profundamente tus relaciones cercanas y "
+                f"puedes preocuparte por mantenerlas estables, pero al mismo tiempo, existe una parte "
+                f"de ti que prefiere mantener cierta independencia emocional. Es como si existiera una "
+                f"tensión interna entre el deseo de cercanía y la necesidad de protegerte. "
+                f"Esto es más común de lo que piensas y puede estar relacionado con experiencias pasadas "
+                f"donde la intimidad fue tanto reconfortante como impredecible."
+            )
+        elif ("Ansioso" in estilo1 and "Desorganizado" in estilo2) or ("Ansioso" in estilo2 and "Desorganizado" in estilo1):
+            interpretacion_final["Estilo de Apego"] = "Ansioso-Desorganizado"
+            interpretacion_final["Interpretacion"] = (
+                f"Tu patrón de vinculación combina una fuerte necesidad de conexión con cierta "
+                f"confusión sobre cómo acercarte a los demás. Puedes experimentar preocupación "
+                f"por tus relaciones y, al mismo tiempo, sentirte incierto sobre cuál es la mejor "
+                f"forma de mantenerlas. Es posible que a veces envíes señales contradictorias sin "
+                f"darte cuenta, lo que puede generar malentendidos. Esto podría estar relacionado "
+                f"con experiencias donde el apoyo emocional fue inconsistente."
+            )
+        elif ("Evitativo" in estilo1 and "Desorganizado" in estilo2) or ("Evitativo" in estilo2 and "Desorganizado" in estilo1):
+            interpretacion_final["Estilo de Apego"] = "Evitativo-Desorganizado"
+            interpretacion_final["Interpretacion"] = (
+                f"Tu forma de relacionarte muestra una tendencia a mantener distancia emocional, "
+                f"combinada con cierta ambivalencia sobre la cercanía. Puedes preferir resolver "
+                f"las cosas por tu cuenta, pero al mismo tiempo experimentar confusión sobre "
+                f"cuándo y cómo acercarte a los demás. Es posible que las relaciones te parezcan "
+                f"impredecibles o complicadas, lo que te lleva a mantener cierta cautela emocional."
+            )
+        else:
+            # Otras combinaciones
+            estilo1_simple = estilo1.replace("Apego ", "")
+            estilo2_simple = estilo2.replace("Apego ", "")
+            interpretacion_final["Estilo de Apego"] = f"{estilo1_simple}-{estilo2_simple}"
+            interpretacion_final["Interpretacion"] = (
+                f"Tu patrón de apego muestra una combinación de características {estilo1.lower()} "
+                f"y {estilo2.lower()}. Esto significa que tu forma de relacionarte tiene aspectos "
+                f"de ambos estilos, lo que puede hacer que tus relaciones sean ricas pero también "
+                f"complejas. Es importante que reconozcas esta dualidad para entender mejor tus "
+                f"necesidades emocionales."
+            )
+    
+    # Si no hay combinaciones claras, usar el estilo dominante
+    elif estilos_altos:
+        estilo_dominante = max(estilos_altos.items(), key=lambda x: x[1])
+        nombre_estilo, puntaje = estilo_dominante
+        print(f"🔍 DEBUG - Estilo dominante: {nombre_estilo} ({puntaje})")
+        
+        if "Seguro" in nombre_estilo:
+            interpretacion_final["Estilo de Apego"] = "Seguro"
+            interpretacion_final["Interpretacion"] = (
+                "Tu estilo de apego es principalmente seguro, lo que significa que te sientes "
+                "cómodo tanto dando como recibiendo apoyo emocional. Confías en que las personas "
+                "importantes en tu vida estarán ahí cuando las necesites, y esto te permite "
+                "mantener relaciones equilibradas y satisfactorias. Esta seguridad emocional "
+                "es una fortaleza importante que te ayuda a navegar los desafíos de la vida "
+                "con mayor estabilidad."
+            )
+        elif "Ansioso" in nombre_estilo:
+            interpretacion_final["Estilo de Apego"] = "Ansioso"
+            interpretacion_final["Interpretacion"] = (
+                "Tu estilo de apego es principalmente ansioso, lo que significa que valoras "
+                "profundamente tus relaciones cercanas y puedes experimentar preocupación "
+                "cuando sientes que estas conexiones están en riesgo. Es posible que busques "
+                "confirmación frecuente de que eres valorado y que tus seres queridos estén "
+                "bien. Esta sensibilidad emocional, aunque a veces intensa, también te permite "
+                "ser muy empático y atento a las necesidades de los demás."
+            )
+        elif "Evitativo" in nombre_estilo:
+            interpretacion_final["Estilo de Apego"] = "Evitativo"
+            interpretacion_final["Interpretacion"] = (
+                "Tu estilo de apego es principalmente evitativo, lo que significa que valoras "
+                "mucho tu independencia y prefieres resolver las cosas por tu cuenta. Puede "
+                "resultarte difícil depender completamente de otros, incluso cuando podrían "
+                "ayudarte. Esta autosuficiencia puede ser una fortaleza en muchas situaciones, "
+                "aunque a veces podría limitarte para recibir el apoyo que mereces y necesitas."
+            )
+        elif "Desorganizado" in nombre_estilo:
+            interpretacion_final["Estilo de Apego"] = "Desorganizado"
+            interpretacion_final["Interpretacion"] = (
+                "Tu estilo de apego muestra características desorganizadas, lo que puede "
+                "manifestarse como cierta confusión o ambivalencia en tus relaciones. A veces "
+                "puedes sentirte incierto sobre cómo acercarte a los demás o cómo interpretar "
+                "sus intenciones. Es posible que tengas experiencias pasadas que han hecho "
+                "que las relaciones te parezcan impredecibles, lo que es completamente comprensible "
+                "y puede trabajarse con el tiempo y la reflexión."
+            )
+    
+    # Si no hay estilos claramente altos, tomar el más alto disponible
+    else:
+        estilo_principal = max(estilos_apego.items(), key=lambda x: x[1])
+        nombre_estilo, puntaje = estilo_principal
+        print(f"🔍 DEBUG - Ningún estilo alto, tomando el mayor: {nombre_estilo} ({puntaje})")
+        
+        estilo_simple = nombre_estilo.replace("Apego ", "")
+        interpretacion_final["Estilo de Apego"] = f"{estilo_simple} (Moderado)"
+        interpretacion_final["Interpretacion"] = (
+            f"Tu estilo de apego muestra tendencias hacia lo {nombre_estilo.lower()}, aunque "
+            f"no de forma muy marcada. Esto sugiere que tienes cierta flexibilidad en tu forma "
+            f"de relacionarte, pudiendo adaptarte a diferentes situaciones y personas. Esta "
+            f"versatilidad emocional puede ser una ventaja, ya que te permite responder de "
+            f"manera apropiada a diversos contextos relacionales."
+        )
+    
+    # Analizar triada oscura solo si hay puntajes relevantes
+    triada_oscura = {
+        "Maquiavelismo": resultado_numerico["Maquiavelismo"],
+        "Narcisismo": resultado_numerico["Narcisismo"],
+        "Psicopatía": resultado_numerico["Psicopatía"]
+    }
+    
+    # Solo mencionar triada oscura si hay puntajes moderados-altos
+    triada_relevante = {k: v for k, v in triada_oscura.items() if v >= 3.0}
+    print(f"🔍 DEBUG - Triada relevante (>=3.0): {triada_relevante}")
+    
+    if triada_relevante:
+        triada_max = max(triada_relevante.items(), key=lambda x: x[1])
+        rasgo_principal, puntaje_triada = triada_max
+        
+        if puntaje_triada >= 3.5:
+            if rasgo_principal == "Maquiavelismo":
+                interpretacion_final["Rasgo Adicional"] = (
+                    "También muestras una capacidad natural para el pensamiento estratégico "
+                    "en situaciones sociales. Esto puede ser una ventaja cuando necesitas "
+                    "navegar situaciones complejas, aunque es importante mantener un equilibrio "
+                    "entre efectividad y autenticidad en tus relaciones."
+                )
+            elif rasgo_principal == "Narcisismo":
+                interpretacion_final["Rasgo Adicional"] = (
+                    "Tienes una buena confianza en ti mismo y valoras el reconocimiento por "
+                    "tus logros. Esta autoconfianza puede ser muy útil para alcanzar metas "
+                    "y enfrentar desafíos, siempre que también puedas reconocer y valorar "
+                    "genuinamente las contribuciones de los demás."
+                )
+            elif rasgo_principal == "Psicopatía":
+                interpretacion_final["Rasgo Adicional"] = (
+                    "Tienes una capacidad para tomar decisiones de manera objetiva y actuar "
+                    "con determinación cuando es necesario. Esta frialdad emocional puede "
+                    "ser útil en situaciones que requieren decisiones difíciles, aunque es "
+                    "importante mantener la empatía en tus relaciones personales."
+                )
+    
+    # Mensaje de apoyo final empático
+    interpretacion_final["Mensaje de Apoyo"] = (
+        "Recuerda que tu forma de relacionarte se desarrolló como una respuesta adaptativa "
+        "a tus experiencias de vida. No hay estilos 'buenos' o 'malos', sino diferentes "
+        "maneras de navegar el mundo emocional. Si sientes que tus patrones relacionales "
+        "te generan malestar o te gustaría explorar más a fondo tu forma de conectar con "
+        "otros, puedes acudir a la Oficina de Bienestar Estudiantil (OBE) para recibir "
+        "acompañamiento profesional y empático."
+    )
+    
+    # Incluir puntuaciones para referencia, pero de forma amigable
+    interpretacion_final["Tus Puntuaciones"] = {
+        "Estilos de Apego": {
+            "Seguro": round(resultado_numerico["Apego Seguro"], 1),
+            "Ansioso": round(resultado_numerico["Apego Ansioso"], 1),
+            "Evitativo": round(resultado_numerico["Apego Evitativo"], 1),
+            "Desorganizado": round(resultado_numerico["Apego Desorganizado"], 1)
+        }
+    }
+    
+    # Solo incluir triada oscura si es relevante
+    if triada_relevante:
+        interpretacion_final["Tus Puntuaciones"]["Rasgos de Personalidad"] = {
+            k: round(v, 1) for k, v in triada_relevante.items()
+        }
+    
+    print(f"🔍 DEBUG - Resultado final: {interpretacion_final.get('Estilo de Apego', 'No definido')}")
+    
+    return interpretacion_final
+
 def interpretar_textos(resultado):
     """
+    Función legacy mantenida para compatibilidad.
     Recibe el dict con valores numéricos (incluye dominantes) y devuelve
     un dict con interpretaciones detalladas para cada rasgo, más los dominantes y mensaje final.
     También incluye una descripción general de la personalidad.
